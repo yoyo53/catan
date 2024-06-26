@@ -1,5 +1,7 @@
 import asyncio
 import websockets
+import json
+from components.Exceptions import Exceptions
 
 
 class WebsocketServer:
@@ -12,7 +14,9 @@ class WebsocketServer:
         self.clients.append(websocket)
         while True:
             message = await websocket.recv()
-            print(message)
+            print("Received message", message)
+            response = self.handle_message(message)
+            print("response : ", response)
 
     async def start_async(self):
         server = await websockets.serve(self.handler, "0.0.0.0", self.port)
@@ -34,6 +38,21 @@ class WebsocketServer:
                     self.clients.remove(client)
                     break
             await asyncio.sleep(20)
+
+    def handle_message(self,message):
+        try:
+            request = json.loads(message)
+            message_type = request['type']
+            match(message_type):
+                case "create_lobby":
+                    print("create lobby here")
+                case _:
+                    print("to determine")
+                
+        except (json.JSONDecodeError, KeyError):
+            e = Exceptions(0,"Invalid json")
+            return e.to_json()
+
 
 
 if __name__ == "__main__":
