@@ -33,3 +33,7 @@ class WebsocketServer:
                     break
             await asyncio.sleep(1)
 
+
+if __name__ == "__main__":
+    server = WebsocketServer(8765)
+    server.start()
