@@ -1,0 +1,32 @@
+# Fichiers et dossiers générés par Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Fichiers de configuration
+*.ini
+*.cfg
+*.conf
+
+# Fichiers de sauvegarde
+*~
+*.bak
+*.swp
+
+# Fichiers de logs
+*.log
+
+# Dossiers spécifiques à certains outils
+venv/
+env/
+.idea/
+.vscode/
+
+# Fichiers de dépendances
+pip-lock.txt
+
+# Fichiers de sortie
+dist/
+build/
+*.egg-info/
