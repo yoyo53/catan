@@ -7,10 +7,12 @@ class WebsocketServer:
         self.port = port
         self.clients = []
 
-    async def handler(self, websocket, path):
+    async def handler(self, websocket):
         print("WebSocket client connected")
         self.clients.append(websocket)
-        await asyncio.Future()
+        while True:
+            message = await websocket.recv()
+            print(message)
 
     async def start_async(self):
         server = await websockets.serve(self.handler, "0.0.0.0", self.port)
@@ -31,7 +33,7 @@ class WebsocketServer:
                     print("ws client disconnected")
                     self.clients.remove(client)
                     break
-            await asyncio.sleep(1)
+            await asyncio.sleep(20)
 
 
 if __name__ == "__main__":
