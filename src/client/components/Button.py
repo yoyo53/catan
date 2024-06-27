@@ -4,9 +4,9 @@ class Button:
     def __init__ (self, screen, color, margin_left, margin_top, width, height, text,text_color):
         self.screen = screen
         self.color = color
-        self.button = pygame.Rect(margin_left,margin_top,width,height)
-        self.margin_left = margin_left
-        self.margin_top = margin_top
+        self.margin_left = margin_left - width // 2 #To center
+        self.margin_top = margin_top - height // 2
+        self.button = pygame.Rect(self.margin_left,self.margin_top,width,height)
         self.width = width
         self.heigth = height
         self.text = text
