@@ -16,6 +16,7 @@ class User:
         time.sleep(0.5)
         request = json.dumps({"type": "greeting", "data": {"username": self.username}})
         self.client.send(request)
+        self.hosted_games = []
 
     def create_lobby(self):
         request = json.dumps({"type": "create_lobby", "data": {}})
@@ -34,10 +35,13 @@ class User:
             match message_type:
                 case "create_lobby":
                     lobby_id = response['data']['lobby_id']
-                    self.ui.display_lobby(lobby_id, {"player_1":self.username})
+                    self.hosted_games.append(lobby_id)
+                    self.ui.display_lobby(lobby_id, {"player_1": self.username})
+                    self.ui.display_start_button()
                 case "join_lobby":
                     lobby_id = response['data']['lobby_id']
                     players = response['data']['players']
                     self.ui.display_lobby(lobby_id, players)
+                    if(lobby_id in self.hosted_games): self.ui.display_start_button() #if user is host, get the start button
                 case _:
                     print("Unknown message type")
