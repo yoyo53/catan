@@ -1,9 +1,16 @@
 import websocket
 
 class WebsocketClient:
-    def __init__(self, url):
+    def __init__(self, url, message_queue):
         self.url = url
-        self.ws = websocket.WebSocketApp(url, on_open=self.on_open, on_message=self.on_message, on_error=self.on_error, on_close=self.on_close)
+        self.message_queue = message_queue
+        self.ws = websocket.WebSocketApp(
+            url, 
+            on_open=self.on_open, 
+            on_message=self.on_message, 
+            on_error=self.on_error, 
+            on_close=self.on_close
+        )
 
     def on_open(self, ws):
         print("WebSocket client connected")
@@ -17,11 +24,10 @@ class WebsocketClient:
 
     def on_message(self, ws, message):
         print(f"Received message: {message}")
+        self.message_queue.put(message)
 
     def start(self):
         self.ws.run_forever()
 
     def send(self, message):
         self.ws.send(message)
-    
-

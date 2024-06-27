@@ -4,7 +4,7 @@ from components.Button import Button
 import sys
 
 class UserInterface:
-    def __init__(self,fps,window_width, window_height):
+    def __init__(self, fps, window_width, window_height):
         pygame.init()
         self.clock = pygame.time.Clock()
         self.fps = fps
@@ -17,8 +17,8 @@ class UserInterface:
     
     def display_main_menu(self):
         self.screen.fill(self.colors.BLACK)
-        create_lobby_button = Button(self.screen,self.colors.WHEAT,100,100,250,50,"Créer un lobby",self.colors.WHITE)
-        join_lobby_button = Button(self.screen,self.colors.ORE,100,200,250,50,"Rejoindre un lobby",self.colors.WHITE)
+        create_lobby_button = Button(self.screen, self.colors.WHEAT, 100, 100, 250, 50, "Créer un lobby", self.colors.WHITE)
+        join_lobby_button = Button(self.screen, self.colors.ORE, 100, 200, 250, 50, "Rejoindre un lobby", self.colors.WHITE)
         join_lobby_button.draw()
         create_lobby_button.draw()
         
@@ -65,3 +65,16 @@ class UserInterface:
 
         self.screen.fill((0, 0, 0))
         return text
+
+    def display_lobby(self, lobby_id, players):
+        self.screen.fill(self.colors.BLACK)
+        lobby_text = self.font.render(f"Lobby ID: {lobby_id}", True, self.colors.WHITE)
+        self.screen.blit(lobby_text, (50, 50))
+        
+        y_offset = 100
+        for player_number,username in players.items():
+            player_text = self.font.render(f"{player_number}: {username.split('#')[0]}", True, self.colors.WHITE)
+            self.screen.blit(player_text, (50, y_offset))
+            y_offset += 40
+        
+        pygame.display.flip()
