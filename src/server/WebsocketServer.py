@@ -89,6 +89,7 @@ class WebsocketServer:
         lobby = self.lobby_manager.get_lobby(lobby_id)
         lobby.join_lobby(client)
 
+        #to notice all clients that someone just joined the lobby
         response = Response(1, "join_lobby",lobby_id=lobby_id, players=lobby.clients)
         for client_id in lobby.clients.values():
             ws = self.clients[client_id]
