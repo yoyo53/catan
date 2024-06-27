@@ -5,7 +5,7 @@ from components.ErrorMessage import ErrorMessage
 
 class Lobby:
     def __init__(self):
-        self.lobby_id = self.generate_lobby_id(6)
+        self.lobby_id = self.generate_lobby_id(4)
         self.clients = {}
         self.status = "waiting"
         
