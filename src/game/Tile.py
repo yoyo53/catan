@@ -5,6 +5,8 @@ class Tile:
         self.x = x
         self.y = y
         self.z = z
+        self.corners = []
+        self.edges = []
     
     def getType(self):
         return self.type

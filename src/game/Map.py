@@ -9,6 +9,8 @@ from Building import Road, Village, City
 class Map:
     #attributes are hardcoded because they are the same for every game
     def __init__ (self):
+        self.edges = [] # List of edges on the map
+        self.corners = []
         self.buildings = [] # List of buildings on the map
         self.radius_map = 2
         self.radius_hex = 100
@@ -178,7 +180,6 @@ while running:
             if event.button == 1:  # Left click
                 road_position = map.get_road_position(event.pos)
                 if road_position:
-                    print("add road")
                     map.add_building(road_position)
                 else:
                     village_position = map.get_village_position(event.pos)
