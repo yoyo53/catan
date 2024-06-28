@@ -1,7 +1,7 @@
 import pygame
+import sys
 from components.Colors import Colors
 from components.Button import Button
-import sys
 
 class UserInterface:
     def __init__(self, fps, window_width, window_height):
@@ -16,6 +16,19 @@ class UserInterface:
         self.buttons = []
         pygame.display.set_caption('CATAN - Multijoueur')
     
+    def screen_copy(self):
+        screen_snapshot = self.screen.copy()
+        buttons_snapshot = self.buttons.copy()
+        return screen_snapshot, buttons_snapshot
+    
+    def restore_screen(self, screen_snapshot, buttons_snapshot):
+        self.screen.blit(screen_snapshot, (0, 0))
+
+        self.buttons = buttons_snapshot
+        for button in self.buttons:
+            button.draw()
+        pygame.display.flip()
+
     def display_main_menu(self):
         self.screen.fill(self.colors.BLACK)
         create_lobby_button = Button(self.screen, self.colors.WHEAT, 200, 100, 250, 50, "Créer un lobby", self.colors.WHITE)
@@ -24,7 +37,7 @@ class UserInterface:
         create_lobby_button.draw()
         self.buttons.append(create_lobby_button)
         self.buttons.append(join_lobby_button)
-    
+
     def draw_text_input_box(self, prompt, x, y, width, height):
         input_box = pygame.Rect(x, y, width, height)
         color_inactive = pygame.Color('lightskyblue3')
@@ -73,7 +86,7 @@ class UserInterface:
         self.screen.blit(lobby_text, (50, 50))
         
         y_offset = 100
-        for player_number,username in players.items():
+        for player_number, username in players.items():
             player_text = self.font.render(f"{player_number}: {username.split('#')[0]}", True, self.colors.WHITE)
             self.screen.blit(player_text, (50, y_offset))
             y_offset += 40
@@ -84,7 +97,46 @@ class UserInterface:
         start_button = Button(self.screen, self.colors.WHEAT, self.WINDOW_WIDTH // 2, self.WINDOW_HEIGHT // 2 , 250, 50, "Lancer la partie", self.colors.WHITE)
         start_button.draw()
         self.buttons.append(start_button)
-    
+
+    def display_error(self, error_message, previous_screen, previous_buttons):
+        error_popup_width = 400
+        error_popup_height = 200
+        error_popup_rect = pygame.Rect(
+            (self.WINDOW_WIDTH - error_popup_width) // 2,
+            (self.WINDOW_HEIGHT - error_popup_height) // 2,
+            error_popup_width,
+            error_popup_height - 50
+        )
+
+        close_button = Button(self.screen, self.colors.RED, 
+                              (self.WINDOW_WIDTH // 2) - 50, 
+                              (self.WINDOW_HEIGHT // 2) + 10, 
+                              100, 40, 
+                              "Close", self.colors.WHITE)
+        
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if close_button.is_clicked(event.pos):
+                        done = True
+
+            self.screen.blit(previous_screen, (0, 0))  
+            pygame.draw.rect(self.screen, self.colors.WHEAT, error_popup_rect)
+
+            error_text_surface = self.font.render(error_message, True, self.colors.BLACK)
+            error_text_rect = error_text_surface.get_rect(center=error_popup_rect.center)
+            self.screen.blit(error_text_surface, error_text_rect)
+
+            close_button.draw()
+
+            pygame.display.flip()
+
+        self.restore_screen(previous_screen, previous_buttons)
+
     def handle_events(self, event):
         for button in self.buttons:
             if button.is_clicked(event.pos):
