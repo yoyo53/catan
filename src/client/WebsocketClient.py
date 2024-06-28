@@ -25,6 +25,3 @@ class WebsocketClient:
         self.ws.send(message)
     
 
-if __name__ == "__main__":
-    client = WebsocketClient("ws://localhost:8765")
-    client.start()
