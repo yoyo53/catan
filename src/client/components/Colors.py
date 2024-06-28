@@ -8,3 +8,4 @@ class Colors:
         self.ORE = (128,128,128)
         self.BRICK = (139,69,19)
         self.DESERT = (210,180,149)
+        self.RED = (255,0,0)

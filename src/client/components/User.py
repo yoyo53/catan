@@ -43,5 +43,9 @@ class User:
                     players = response['data']['players']
                     self.ui.display_lobby(lobby_id, players)
                     if(lobby_id in self.hosted_games): self.ui.display_start_button() #if user is host, get the start button
+                case "error":
+                    error_message = response['data']['error_message']
+                    previous_screen, previous_buttons = self.ui.screen_copy()  # Take a snapshot of the current screen and buttons
+                    self.ui.display_error(error_message, previous_screen, previous_buttons)
                 case _:
                     print("Unknown message type")

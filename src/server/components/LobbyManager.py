@@ -1,7 +1,6 @@
 import random
 import string
-from components.Response import Response
-from components.ErrorMessage import ErrorMessage
+from components.Response import Response, ErrorMessage
 
 class Lobby:
     def __init__(self):
