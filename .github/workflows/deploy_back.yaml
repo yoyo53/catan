@@ -11,7 +11,7 @@ on:
 
 defaults:
   run:
-    working-directory: server
+    working-directory: src
 
 jobs:
   deploy:
@@ -20,6 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - run: flyctl deploy --config server/fly.toml --dockerfile server/Dockerfile --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
