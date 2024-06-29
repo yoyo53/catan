@@ -1,17 +1,17 @@
 from Edge import Edge
 from Corner import Corner
 from Tile import Tile
+from typing import List
 
 class Map:
     #attributes are hardcoded because they are the same for every game
     def __init__ (self):
-        self.tiles = [] # List of tiles on the map
-        self.edges = [] # List of edges on the map
-        self.corners = [] # List of corners on the map
+        self.tiles : List[Tile] = [] # List of tiles on the map
+        self.edges : List[Edge] = [] # List of edges on the map
+        self.corners : List[Corner] = [] # List of corners on the map
         
         self.buildings = [] # List of buildings on the map
         self.roads = []
-        self.robbertile = None
 
         self.array_tile_number = [2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12]
         self.array_tile_type = {
@@ -98,11 +98,4 @@ class Map:
                     creat_corner(tile)
                     self.tiles.append(Tile(x, y))
         
-        print(self.edges)
-
-def main():
-    map = Map()
-    #print(map.tiles)
-
-if __name__ == "__main__":
-    main()
+        #print(self.edges)
