@@ -10,6 +10,9 @@ class Building:
         self.corner = corner
         corner.building = self
 
+        # Player bind
+        owner.buildings.append(self)
+
     def __repr__(self) -> str:
         return f"{self.type} at {self.corner} owned by {self.owner}"
     
