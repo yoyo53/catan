@@ -1,5 +1,6 @@
 from Edge import Edge
 from Corner import Corner
+from typing import List
 
 class Tile:
     def __init__(self, x, y, type = "", number=0):
@@ -9,7 +10,7 @@ class Tile:
         self.x = x
         self.y = y
 
-        self.corners = [] # x6
+        self.corners : List[Corner] = [] # x6
         self.edges = [] # x6
 
     def __eq__(self, other):
