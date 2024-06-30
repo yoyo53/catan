@@ -1,6 +1,6 @@
-from Edge import Edge
-from Corner import Corner
-from Tile import Tile
+from .Edge import Edge
+from .Corner import Corner
+from .Tile import Tile
 from typing import List
 
 class Map:
@@ -36,7 +36,7 @@ class Map:
             x = tile.x
             y = tile.y
             # Corner
-            corner_1 = next((c for c in self.corners if c.x == x and c.y == y), Corner(x, y+2))
+            corner_1 = next((c for c in self.corners if c.x == x and c.y == y+2), Corner(x, y+2))
             corner_2 = next((c for c in self.corners if c.x == x+1 and c.y == y+1), Corner(x+1, y+1))
             corner_3 = next((c for c in self.corners if c.x == x+1 and c.y == y-1), Corner(x+1, y-1))
             corner_4 = next((c for c in self.corners if c.x == x and c.y == y-2), Corner(x, y-2))
@@ -90,12 +90,12 @@ class Map:
                         #void_map[y+8][x+5] = 1
                         tile = Tile(x, y)
                         creat_corner(tile)
-                        self.tiles.append(Tile(x, y))
+                        self.tiles.append(tile)
             else:
                 for x in range(-3, 5, 2):
                     #void_map[y+8][x+5] = 1
                     tile = Tile(x, y)
                     creat_corner(tile)
-                    self.tiles.append(Tile(x, y))
+                    self.tiles.append(tile)
         
         #print(self.edges)
