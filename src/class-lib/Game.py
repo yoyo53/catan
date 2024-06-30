@@ -1,4 +1,8 @@
-from map import Map, Tile, Corner
+from map.Map import Map
+from map.Tile import Tile
+from map.Corner import Corner
+from map.Edge import Edge
+
 from Dice import Dice
 from Player import Player
 from Building import Building
@@ -116,4 +120,14 @@ class Game:
                 max_length = max(max_length, dfs(player, edge, visited, 0))
         return max_length
     
-    
+def main():
+    game = Game()
+    game.players.append(Player("Player 1"))
+    game.players.append(Player("Player 2"))
+    game.players.append(Player("Player 3"))
+    game.players.append(Player("Player 4"))
+
+    print(game.map.tiles)
+
+if __name__ == "__main__":
+    main()

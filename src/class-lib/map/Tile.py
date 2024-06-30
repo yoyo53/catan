@@ -1,5 +1,5 @@
-from Edge import Edge
-from Corner import Corner
+from .Edge import Edge
+from .Corner import Corner
 from typing import List
 
 class Tile:
@@ -17,6 +17,6 @@ class Tile:
         if isinstance(other, Tile):
             return self.x == other.x and self.y == other.y
         return False
-
-        
-
+    
+    def __repr__(self) -> str:
+        return f"Tile({self.x}, {self.y}) : Corner => [{self.corners}] | Edges : => [{self.edges}]\n\n"    
