@@ -52,12 +52,16 @@ class WebsocketServer:
                     return self.create_lobby(client)
                 case "join_lobby":
                     return await self.join_lobby(request,client)
+                case "start_game":
+                    return await self.start_game(client)
                 case _:
                     error = ErrorMessage(0,"Unknown message type")
                     return error.to_json()
-        except (json.JSONDecodeError, KeyError):
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Exception: {e}")
             error = ErrorMessage(0, "Invalid JSON")
             return error.to_json()
+
 
     def register_client(self, greeting, ws):
         message = json.loads(greeting)
@@ -82,14 +86,11 @@ class WebsocketServer:
         return response.to_json()
     
     async def join_lobby(self,request, client_id):
-        print("HELELLLo")
         lobby_id = request['data']['lobby_id']
         lobby = self.lobby_manager.get_lobby(lobby_id) 
-        print("LObby:", lobby)
         ws = self.clients[client_id]
         if(lobby is None):
             response = ErrorMessage(0,"Lobby doesn't exist")
-            print(response.to_json(), "HERE")
             return response.to_json()
         
         join_attempt = json.loads(lobby.join_lobby(client_id)) 
@@ -102,6 +103,16 @@ class WebsocketServer:
             ws = self.clients[client_id]
             await ws.send(response.to_json())
         return response.to_json()
+    
+    async def start_game(self,client):
+        lobby = self.lobby_manager.get_lobby_by_client(client)
+        if(lobby.clients['player_1'] != client):
+            response = ErrorMessage(0,"You are not the host")
+            return response.to_json()
+        
+        lobby.start_game()
+        response = Response(1,"game_started")
+
         
         
 
