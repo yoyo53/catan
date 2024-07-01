@@ -7,7 +7,7 @@ from lib.Building import Building
 
 if __name__ == "__main__":
 
-    UI = UserInterface(60, 1280, 720)
+    UI = UserInterface(60, 1920, 1080)
     
     #username = UI.draw_text_input_box("Pseudo", 50, 50, 50, 50) 
     #user = User(username, UI)
