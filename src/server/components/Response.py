@@ -9,3 +9,7 @@ class Response:
 
     def to_json(self):
         return json.dumps({"status": self.return_code, "data": self.data})
+
+class ErrorMessage(Response):
+    def __init__(self,return_code, error_message):
+        super().__init__(return_code,"error",error_message=error_message)
