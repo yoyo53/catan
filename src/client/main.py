@@ -25,7 +25,7 @@ if __name__ == "__main__":
                         lobby_id = UI.draw_text_input_box("ID du lobby", 50, 50, 50, 50)
                         user.join_lobby(lobby_id)
                     elif clicked_button.text == "Lancer la partie":
-                        user.start_game()
+                        user.start_game(user.hosted_games[0])
 
         user.handle_messages()
 

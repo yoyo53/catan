@@ -26,6 +26,10 @@ class User:
         request = json.dumps({"type": "join_lobby", "data": {"lobby_id":lobby_id}})
         self.client.send(request)
     
+    def start_game(self, lobby_id):
+        request = json.dumps({"type": "start_game", "data": {"lobby_id":lobby_id}})
+        self.client.send(request)
+       
     def handle_messages(self):
         while not self.message_queue.empty():
             message = self.message_queue.get()
@@ -43,5 +47,12 @@ class User:
                     players = response['data']['players']
                     self.ui.display_lobby(lobby_id, players)
                     if(lobby_id in self.hosted_games): self.ui.display_start_button() #if user is host, get the start button
+                case "turn_order":
+                    turn_order = response['data']['turn_order']
+                    for player in turn_order:
+                        player_name = player[0]
+                        order = player[1]
+                        print(f"Player: {player_name}, Order: {order}")
                 case _:
                     print("Unknown message type")
+                    print(response)
