@@ -17,7 +17,7 @@ class ClientMap(Map):
             self.draw_hex(tile)
             
     def draw_hex(self, tile):
-        center = self.hex_to_pixel(tile, self.ui.screen)
+        center = self.center_to_pixel(tile, self.ui.screen)
         corners = []
         for corner in tile.corners:
             corners.append(self.corner_to_pixel(corner, self.ui.screen))
@@ -26,7 +26,7 @@ class ClientMap(Map):
         self.draw_text(self.ui.screen, str(tile.number), center)
 
     #Calcul the center of the hexagon based on the coordinates
-    def hex_to_pixel(self, tile, surface):
+    def center_to_pixel(self, tile, surface):
         center_x = surface.get_width() / 2 + (tile.x * self.radius_hex * 1.75)
         center_y = surface.get_height() / 2 - (tile.y * self.radius_hex)
         return (center_x, center_y)
