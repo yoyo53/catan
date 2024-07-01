@@ -116,8 +116,14 @@ class WebsocketServer:
             ws = self.clients[client_id]
             await ws.send(response.to_json())
         return response.to_json()
-
         
+    async def get_turn_order(self,lobby_id):
+        lobby = self.lobby_manager.get_lobby(lobby_id)
+        lobby.cycle_player()
+        for client_id in lobby.clients.values():
+            ws = self.clients[client_id]
+            response = Response(1, "turn_order", turn_order=lobby.turn_order)
+            await ws.send(response.to_json())
         
 
 if __name__ == "__main__":
