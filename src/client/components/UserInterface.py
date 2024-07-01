@@ -19,6 +19,7 @@ class UserInterface:
         self.WINDOW_HEIGHT = window_height
         self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))  # Peut être défini en plein écran avec pygame.FULLSCREEN
         self.font = pygame.font.Font(None, 36)
+        self.buttons = []
         pygame.display.set_caption('CATAN - Multijoueur')
     
     def screen_copy(self):
@@ -40,8 +41,8 @@ class UserInterface:
         join_lobby_button = Button(self.screen,self.colors.ORE,100,200,250,50,"Rejoindre un lobby",self.colors.WHITE)
         join_lobby_button.draw()
         create_lobby_button.draw()
-        
-        return create_lobby_button, join_lobby_button
+        self.buttons.append(create_lobby_button)
+        self.buttons.append(join_lobby_button)
 
     def draw_text_input_box(self, prompt, x, y, width, height):
         input_box = pygame.Rect(x, y, width, height)
