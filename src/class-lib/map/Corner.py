@@ -3,7 +3,7 @@ class Corner:
         self.x = x
         self.y = y
         self.edges = [] # x3 max - x2 min
-        self.tiles = [] # x2 max - x1 min
+        self.tiles = [] # x3 max - x1 min
         self.building = None
     
     def __eq__(self, other):
