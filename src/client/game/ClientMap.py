@@ -40,8 +40,6 @@ class ClientMap(Map):
     
     
     def corner_to_pixel(self, corner, surface):
-        x = self.radius_hex * (math.sqrt(3) * (corner.x + corner.y / 2))
-        y = self.radius_hex * (3/2 * corner.y)
-        center_x = surface.get_width() / 2 + x
-        center_y = surface.get_height() / 2 - y
+        center_x = (surface.get_width() / 2 + corner.x) * self.radius_hex
+        center_y = (surface.get_height() / 2 - corner.y) * self.radius_hex
         return (center_x, center_y)
