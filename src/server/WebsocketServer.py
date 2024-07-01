@@ -3,9 +3,8 @@ import websockets
 import json
 import random
 import string
-from components.Response import Response
+from components.Response import Response,ErrorMessage
 from components.LobbyManager import LobbyManager
-from components.ErrorMessage import ErrorMessage
 
 class WebsocketServer:
     def __init__(self, port):
@@ -52,11 +51,9 @@ class WebsocketServer:
                 case "create_lobby":
                     return self.create_lobby(client)
                 case "join_lobby":
-                    await self.join_lobby(request,client)
-                    response = Response(1,"information",message="Successfully joined lobby")
-                    return response.to_json()
+                    return await self.join_lobby(request,client)
                 case _:
-                    error = ErrorMessage(0, "Unknown message type")
+                    error = ErrorMessage(0,"Unknown message type")
                     return error.to_json()
         except (json.JSONDecodeError, KeyError):
             error = ErrorMessage(0, "Invalid JSON")
@@ -84,16 +81,27 @@ class WebsocketServer:
         response = Response(1, "create_lobby",lobby_id=lobby_id)
         return response.to_json()
     
-    async def join_lobby(self,request, client):
+    async def join_lobby(self,request, client_id):
+        print("HELELLLo")
         lobby_id = request['data']['lobby_id']
-        lobby = self.lobby_manager.get_lobby(lobby_id)
-        lobby.join_lobby(client)
+        lobby = self.lobby_manager.get_lobby(lobby_id) 
+        print("LObby:", lobby)
+        ws = self.clients[client_id]
+        if(lobby is None):
+            response = ErrorMessage(0,"Lobby doesn't exist")
+            print(response.to_json(), "HERE")
+            return response.to_json()
+        
+        join_attempt = json.loads(lobby.join_lobby(client_id)) 
+        if(join_attempt['status'] == 0):
+            return json.dumps(join_attempt)
 
         #to notice all clients that someone just joined the lobby
         response = Response(1, "join_lobby",lobby_id=lobby_id, players=lobby.clients)
         for client_id in lobby.clients.values():
             ws = self.clients[client_id]
             await ws.send(response.to_json())
+        return response.to_json()
         
         
 
