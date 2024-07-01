@@ -85,6 +85,45 @@ class UserInterface:
 
         self.screen.fill((0, 0, 0))
         return text
+    
+    def display_error(self, error_message, previous_screen, previous_buttons):
+        error_popup_width = 400
+        error_popup_height = 200
+        error_popup_rect = pygame.Rect(
+            (self.WINDOW_WIDTH - error_popup_width) // 2,
+            (self.WINDOW_HEIGHT - error_popup_height) // 2,
+            error_popup_width,
+            error_popup_height - 50
+        )
+
+        close_button = Button(self.screen, self.colors.RED, 
+                              (self.WINDOW_WIDTH // 2) - 50, 
+                              (self.WINDOW_HEIGHT // 2) + 10, 
+                              100, 40, 
+                              "Close", self.colors.WHITE)
+
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if close_button.is_clicked(event.pos):
+                        done = True
+
+            self.screen.blit(previous_screen, (0, 0))  
+            pygame.draw.rect(self.screen, self.colors.WHEAT, error_popup_rect)
+
+            error_text_surface = self.font.render(error_message, True, self.colors.BLACK)
+            error_text_rect = error_text_surface.get_rect(center=error_popup_rect.center)
+            self.screen.blit(error_text_surface, error_text_rect)
+
+            close_button.draw()
+
+            pygame.display.flip()
+
+        self.restore_screen(previous_screen, previous_buttons)
 
     def display_lobby(self, lobby_id, players):
         self.screen.fill(self.colors.BLACK)
