@@ -21,14 +21,14 @@ class ClientMap(Map):
         corners = []
         for corner in tile.corners:
             corners.append(self.corner_to_pixel(corner, self.ui.screen))
-        pygame.draw.polygon(self.ui.screen, self.ui.colors.WHEAT, corners)
+        pygame.draw.polygon(self.ui.screen, self.ui.colors.get_color(tile.type), corners)
         pygame.draw.polygon(self.ui.screen, (0, 0, 0), corners, 1)
-        #self.draw_text(self.screen, str(tile.number), center)
+        self.draw_text(self.ui.screen, str(tile.number), center)
 
     #Calcul the center of the hexagon based on the coordinates
     def hex_to_pixel(self, tile, surface):
-        center_x = surface.get_width() / 2 + tile.x
-        center_y = surface.get_height() / 2 - tile.y
+        center_x = surface.get_width() / 2 + (tile.x * self.radius_hex * 1.75)
+        center_y = surface.get_height() / 2 - (tile.y * self.radius_hex)
         return (center_x, center_y)
 
     
