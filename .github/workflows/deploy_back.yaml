@@ -1,0 +1,25 @@
+name: Build and Deploy 
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - src/server/**
+      - src/class-lib/**
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --config server/fly.toml --dockerfile server/Dockerfile --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

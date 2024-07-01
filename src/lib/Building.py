@@ -1,5 +1,5 @@
-from Player import Player
-from map.Corner import Corner
+from lib.Player import Player
+from lib.map.Corner import Corner
 
 class Building:
     def __init__(self, type : str, corner : Corner, owner : Player):

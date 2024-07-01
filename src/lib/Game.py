@@ -1,14 +1,14 @@
-from map.Map import Map
-from map.Tile import Tile
-from map.Corner import Corner
-from map.Edge import Edge
+from lib.map.Map import Map
+from lib.map.Tile import Tile
+from lib.map.Corner import Corner
+from lib.map.Edge import Edge
 
-from Dice import Dice
-from Player import Player
-from Building import Building
-from Road import Road
+from lib.Dice import Dice
+from lib.Player import Player
+from lib.Building import Building
+from lib.Road import Road
+
 from typing import List
-
 import random
 
 
