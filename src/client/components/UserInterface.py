@@ -72,7 +72,6 @@ class UserInterface:
         self.screen.fill((0, 0, 0))
         return text
     
-    def draw_map(self):
-        map = Map()
+    def draw_map(self, map):
         clientMap = ClientMap(map, self)
         clientMap.draw()

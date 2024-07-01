@@ -2,7 +2,7 @@ from lib.map.Corner import Corner
 from typing import List
 
 class Tile:
-    def __init__(self, x, y, type = "", number=0):
+    def __init__(self, x, y, type= "", number = 0):
         self.type = type
         self.number = number
         # Coordinates of the center of the tile

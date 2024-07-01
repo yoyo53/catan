@@ -3,11 +3,13 @@ import sys
 from components.UserInterface import UserInterface
 from components.User import User
 
-from lib.Building import Building
+from lib.map.Map import Map
 
 if __name__ == "__main__":
 
     UI = UserInterface(60, 1920, 1080)
+    map = Map()
+    
     
     #username = UI.draw_text_input_box("Pseudo", 50, 50, 50, 50) 
     #user = User(username, UI)
@@ -31,8 +33,7 @@ if __name__ == "__main__":
                         user.start_game()"""
 
         #user.handle_messages()
-
-        UI.draw_map()
+        UI.draw_map(map)
         pygame.display.flip()
 
         pygame.display.update()

@@ -2,6 +2,7 @@ from lib.map.Edge import Edge
 from lib.map.Corner import Corner
 from lib.map.Tile import Tile
 from typing import List
+import random
 
 class Map:
     #attributes are hardcoded because they are the same for every game
@@ -72,11 +73,6 @@ class Map:
                     
             
 
-
-        void_map = [[0] * 11 for _ in range(17)]
-        import numpy as np
-        void_map = np.array(void_map)
-        #print(void_map)
         for y in range(-6, 9, 3):
             if y % 6 == 0:
                 if y % 9 == 0:
@@ -84,18 +80,26 @@ class Map:
                         tile = Tile(x, y)
                         creat_corner(tile)
                         self.tiles.append(tile)
-                        #void_map[y+8][x+5] = 1
                 else:
                     for x in range(-2, 4, 2):
-                        #void_map[y+8][x+5] = 1
                         tile = Tile(x, y)
                         creat_corner(tile)
                         self.tiles.append(tile)
             else:
                 for x in range(-3, 5, 2):
-                    #void_map[y+8][x+5] = 1
                     tile = Tile(x, y)
                     creat_corner(tile)
                     self.tiles.append(tile)
+        
+        random.shuffle(self.array_tile_number)
+        for tile in self.tiles:
+            tile.type = random.choice(list(self.array_tile_type.keys()))
+            self.array_tile_type[tile.type] -= 1
+            if self.array_tile_type[tile.type] == 0:
+                del self.array_tile_type[tile.type]
+            if tile.type == "desert":
+                tile.number = 0
+            else:
+                tile.number = self.array_tile_number.pop()
         
         #print(self.edges)
