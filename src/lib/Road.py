@@ -1,5 +1,5 @@
-from Player import Player
-from map.Edge import Edge
+from lib.Player import Player
+from lib.map.Edge import Edge
 
 class Road:
     def __init__(self, owner : Player, edge : Edge):
