@@ -55,6 +55,11 @@ class WebsocketServer:
                     await self.join_lobby(request,client)
                     response = Response(1,"information",message="Successfully joined lobby")
                     return response.to_json()
+                case "start_game":
+                    lobby_id = request['data']['lobby_id']
+                    await self.get_turn_order(lobby_id)
+                    response = Response(1,"information",message="Game started")
+                    return response.to_json()
                 case _:
                     error = ErrorMessage(0, "Unknown message type")
                     return error.to_json()
@@ -95,6 +100,13 @@ class WebsocketServer:
             ws = self.clients[client_id]
             await ws.send(response.to_json())
         
+    async def get_turn_order(self,lobby_id):
+        lobby = self.lobby_manager.get_lobby(lobby_id)
+        lobby.cycle_player()
+        for client_id in lobby.clients.values():
+            ws = self.clients[client_id]
+            response = Response(1, "turn_order", turn_order=lobby.turn_order)
+            await ws.send(response.to_json())
         
 
 if __name__ == "__main__":
