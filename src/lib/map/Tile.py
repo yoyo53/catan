@@ -1,5 +1,4 @@
-from Edge import Edge
-from Corner import Corner
+from lib.map.Corner import Corner
 from typing import List
 
 class Tile:
@@ -17,6 +16,9 @@ class Tile:
         if isinstance(other, Tile):
             return self.x == other.x and self.y == other.y
         return False
+    
+    def __repr__(self) -> str:
+        return f"({self.x}, {self.y}), type: {self.type}, number: {self.number}, corners: {self.corners}"
 
         
 
