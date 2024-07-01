@@ -8,3 +8,14 @@ class Colors:
         self.ORE = (128,128,128)
         self.BRICK = (139,69,19)
         self.DESERT = (210,180,149)
+        
+    def get_color(self, tile_type):
+        colors = {
+            'brick': self.BRICK,
+            'desert': self.DESERT,
+            'ore': self.ORE,
+            'wood': self.WOOD,
+            'sheep': self.SHEEP,
+            'wheat': self.WHEAT,
+        }
+        return colors.get(tile_type)
