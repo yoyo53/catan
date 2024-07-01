@@ -10,7 +10,7 @@ class ClientMap(Map):
     def __init__ (self, map, ui):
         self.map = map
         self.ui = ui
-        self.radius_hex = 100
+        self.radius_hex = 50
 
     def draw(self):
         for tile in self.map.tiles:
@@ -40,6 +40,6 @@ class ClientMap(Map):
     
     
     def corner_to_pixel(self, corner, surface):
-        center_x = (surface.get_width() / 2 + corner.x) * self.radius_hex
-        center_y = (surface.get_height() / 2 - corner.y) * self.radius_hex
+        center_x = surface.get_width() / 2 + (corner.x * self.radius_hex * 1.75)
+        center_y = surface.get_height() / 2 - (corner.y * self.radius_hex)
         return (center_x, center_y)
