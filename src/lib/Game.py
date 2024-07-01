@@ -1,6 +1,6 @@
 import random
-from map.Map import Map
-from Dice import Dice
+from lib.map.Map import Map
+from lib.Dice import Dice
 
 
 class Game:

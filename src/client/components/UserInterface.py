@@ -3,6 +3,10 @@ from components.Colors import Colors
 from components.Button import Button
 import sys
 
+sys.path.append("..")
+from lib.Building import Building
+from lib.map.Map import Map
+
 class UserInterface:
     def __init__(self, fps, window_width, window_height):
         pygame.init()

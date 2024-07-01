@@ -1,5 +1,5 @@
-from Edge import Edge
-from Corner import Corner
+from lib.map.Edge import Edge
+from lib.map.Corner import Corner
 from typing import List
 
 class Tile:
