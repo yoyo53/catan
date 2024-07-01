@@ -58,5 +58,12 @@ class User:
                 case "game_start":
                     self.game = ClientGame(self.ui, response['data']['jsondata'])
                     self.ui.draw_game(self.game)
+                case "turn_order":
+                    turn_order = response['data']['turn_order']
+                    for player in turn_order:
+                        player_name = player[0]
+                        order = player[1]
+                        print(f"Player: {player_name}, Order: {order}")
                 case _:
                     print("Unknown message type")
+                    print(response)
