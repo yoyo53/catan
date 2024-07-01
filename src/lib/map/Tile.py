@@ -1,5 +1,5 @@
-from .Edge import Edge
-from .Corner import Corner
+from lib.map.Edge import Edge
+from lib.map.Corner import Corner
 from typing import List
 
 class Tile:
@@ -11,7 +11,7 @@ class Tile:
         self.y = y
 
         self.corners : List[Corner] = [] # x6
-        self.edges = [] # x6
+        self.edges : List[Edge] = [] # x6
 
     def __eq__(self, other):
         if isinstance(other, Tile):
