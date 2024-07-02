@@ -151,3 +151,8 @@ class UserInterface:
     def draw_map(self, map):
         clientMap = ClientMap(map, self)
         clientMap.draw()
+
+    def draw_game(self, game):
+        self.screen.fill(self.colors.BLACK)
+        game.map.draw()
+        pygame.display.flip()

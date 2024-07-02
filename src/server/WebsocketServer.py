@@ -110,8 +110,11 @@ class WebsocketServer:
             response = ErrorMessage(0,"You are not the host")
             return response.to_json()
         
-        response = lobby.start_game()
-        response = Response(1,response)
+        jsondata = lobby.start_game()
+        response = Response(666,"game_start",jsondata = jsondata)
+        for client_id in lobby.clients.values():
+            ws = self.clients[client_id]
+            await ws.send(response.to_json())
         return response.to_json()
 
         

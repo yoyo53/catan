@@ -7,13 +7,14 @@ sys.path.append('..')
 from lib.map.Map import Map
 
 class ClientMap(Map):
-    def __init__ (self, map, ui):
-        self.map = map
+    def __init__ (self, ui):
+        super().__init__()
+        #self.map = map
         self.ui = ui
         self.radius_hex = 50
 
     def draw(self):
-        for tile in self.map.tiles:
+        for tile in self.tiles:
             self.draw_hex(tile)
             
     def draw_hex(self, tile):
@@ -43,3 +44,15 @@ class ClientMap(Map):
         center_x = surface.get_width() / 2 + (corner.x * self.radius_hex * 1.75)
         center_y = surface.get_height() / 2 - (corner.y * self.radius_hex)
         return (center_x, center_y)
+    
+    def gettile(self, x, y):
+        for tile in self.tiles:
+            if tile.x == x and tile.y == y:
+                return tile
+        return None
+
+    def updatetile(self, json):
+        for jsontile in json["tiles"]:
+            tile = self.gettile(jsontile["x"], jsontile["y"])
+            tile.type = jsontile["type"]
+            tile.number = jsontile["number"]

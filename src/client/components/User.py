@@ -4,6 +4,8 @@ import time
 import json
 from queue import Queue
 
+from game.ClientGame import ClientGame
+
 SERVER_URL = "ws://127.0.0.1:8765"
 
 class User:
@@ -17,6 +19,8 @@ class User:
         request = json.dumps({"type": "greeting", "data": {"username": self.username}})
         self.client.send(request)
         self.hosted_games = []
+
+        self.game = None
 
     def create_lobby(self):
         request = json.dumps({"type": "create_lobby", "data": {}})
@@ -51,5 +55,8 @@ class User:
                     error_message = response['data']['error_message']
                     previous_screen, previous_buttons = self.ui.screen_copy()  # Take a snapshot of the current screen and buttons
                     self.ui.display_error(error_message, previous_screen, previous_buttons)
+                case "game_start":
+                    self.game = ClientGame(self.ui, response['data']['jsondata'])
+                    self.ui.draw_game(self.game)
                 case _:
                     print("Unknown message type")
