@@ -25,7 +25,16 @@ class Map:
             "wheat": 4
         }
         self.create_map()
-
+    
+    def createTile(self, x, y):
+        return Tile(x, y)
+    
+    def createCorner(self, x, y):
+        return Corner(x, y)
+    
+    def createEdge(self, corner1 : Corner, corner2 : Corner):
+        return Edge(corner1, corner2)
+    
     def create_map(self):
         # For the tiles
         # x: -5 à 5
@@ -34,26 +43,26 @@ class Map:
         # x 2 en 2
         # y 4 en 4
 
-        def creat_corner(tile : Tile):
+        def creat_corners(tile : Tile):
             x = tile.x
             y = tile.y
             # Corner
-            corner_1 = next((c for c in self.corners if c.x == x and c.y == y+2), Corner(x, y+2))
-            corner_2 = next((c for c in self.corners if c.x == x+1 and c.y == y+1), Corner(x+1, y+1))
-            corner_3 = next((c for c in self.corners if c.x == x+1 and c.y == y-1), Corner(x+1, y-1))
-            corner_4 = next((c for c in self.corners if c.x == x and c.y == y-2), Corner(x, y-2))
-            corner_5 = next((c for c in self.corners if c.x == x-1 and c.y == y-1), Corner(x-1, y-1))
-            corner_6 = next((c for c in self.corners if c.x == x-1 and c.y == y+1), Corner(x-1, y+1))
+            corner_1 = next((c for c in self.corners if c.x == x and c.y == y), self.createCorner(x, y+2))
+            corner_2 = next((c for c in self.corners if c.x == x+1 and c.y == y+1), self.createCorner(x+1, y+1))
+            corner_3 = next((c for c in self.corners if c.x == x+1 and c.y == y-1), self.createCorner(x+1, y-1))
+            corner_4 = next((c for c in self.corners if c.x == x and c.y == y-2), self.createCorner(x, y-2))
+            corner_5 = next((c for c in self.corners if c.x == x-1 and c.y == y-1), self.createCorner(x-1, y-1))
+            corner_6 = next((c for c in self.corners if c.x == x-1 and c.y == y+1), self.createCorner(x-1, y+1))
             
             corner_list = [corner_1, corner_2, corner_3, corner_4, corner_5, corner_6]
 
             #Edge
-            edge_1 = next((e for e in self.edges if e == Edge(corner_1, corner_2)), Edge(corner_1, corner_2))
-            edge_2 = next((e for e in self.edges if e == Edge(corner_2, corner_3)), Edge(corner_2, corner_3))
-            edge_3 = next((e for e in self.edges if e == Edge(corner_3, corner_4)), Edge(corner_3, corner_4))
-            edge_4 = next((e for e in self.edges if e == Edge(corner_4, corner_5)), Edge(corner_4, corner_5))
-            edge_5 = next((e for e in self.edges if e == Edge(corner_5, corner_6)), Edge(corner_5, corner_6))
-            edge_6 = next((e for e in self.edges if e == Edge(corner_6, corner_1)), Edge(corner_6, corner_1))
+            edge_1 = next((e for e in self.edges if e == self.createEdge(corner_1, corner_2)), self.createEdge(corner_1, corner_2))
+            edge_2 = next((e for e in self.edges if e == self.createEdge(corner_2, corner_3)), self.createEdge(corner_2, corner_3))
+            edge_3 = next((e for e in self.edges if e == self.createEdge(corner_3, corner_4)), self.createEdge(corner_3, corner_4))
+            edge_4 = next((e for e in self.edges if e == self.createEdge(corner_4, corner_5)), self.createEdge(corner_4, corner_5))
+            edge_5 = next((e for e in self.edges if e == self.createEdge(corner_5, corner_6)), self.createEdge(corner_5, corner_6))
+            edge_6 = next((e for e in self.edges if e == self.createEdge(corner_6, corner_1)), self.createEdge(corner_6, corner_1))
 
             edge_list = [edge_1, edge_2, edge_3, edge_4, edge_5, edge_6]
 
@@ -79,18 +88,18 @@ class Map:
             if y % 6 == 0:
                 if y % 9 == 0:
                     for x in range(-4, 6, 2):
-                        tile = Tile(x, y)
-                        creat_corner(tile)
+                        tile = self.createTile(x, y)
+                        creat_corners(tile)
                         self.tiles.append(tile)
                 else:
                     for x in range(-2, 4, 2):
-                        tile = Tile(x, y)
-                        creat_corner(tile)
+                        tile = self.createTile(x, y)
+                        creat_corners(tile)
                         self.tiles.append(tile)
             else:
                 for x in range(-3, 5, 2):
-                    tile = Tile(x, y)
-                    creat_corner(tile)
+                    tile = self.createTile(x, y)
+                    creat_corners(tile)
                     self.tiles.append(tile)
 
         random.shuffle(self.array_tile_number)
