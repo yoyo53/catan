@@ -110,8 +110,9 @@ class WebsocketServer:
             response = ErrorMessage(0,"You are not the host")
             return response.to_json()
         
-        lobby.start_game()
-        response = Response(1,"game_started")
+        response = lobby.start_game()
+        response = Response(1,response)
+        return response.to_json()
 
         
         

@@ -4,7 +4,9 @@ import sys
 from components.Response import Response, ErrorMessage
 
 sys.path.append('..')
-from lib import Game, Player
+#from lib import Game, Player
+#from lib.map import Map, Tile
+from components.ClassGameLogic.GameLogic import GameServ, PlayerServ
 
 class Lobby:
     def __init__(self):
@@ -33,9 +35,11 @@ class Lobby:
         return response.to_json()
     
     def start_game(self):
-        self.game = Game()
+        self.game = GameServ()
         for client in self.clients.values():
-            self.game.players.append(Player(client))
+            self.game.players.append(PlayerServ(client))
+
+        return self.game.to_json()
             
         
 
