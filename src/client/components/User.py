@@ -29,7 +29,7 @@ class User:
     def join_lobby(self,lobby_id):
         request = json.dumps({"type": "join_lobby", "data": {"lobby_id":lobby_id}})
         self.client.send(request)
-
+    
     def start_game(self):
         request = json.dumps({"type": "start_game", "data": {}})
         self.client.send(request)
@@ -37,7 +37,7 @@ class User:
     def get_turn_order(self):
         request = json.dumps({"type": "get_turn_order", "data": {}})
         self.client.send(request)
-    
+
     def handle_messages(self):
         while not self.message_queue.empty():
             message = self.message_queue.get()
