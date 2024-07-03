@@ -5,7 +5,6 @@ class Road:
     def __init__(self, owner : Player, edge : Edge):
         self.owner = owner
         self.edge = edge
-
         edge.road = self
 
     def __eq__(self, value: object) -> bool:
