@@ -19,8 +19,13 @@ class User:
         request = json.dumps({"type": "greeting", "data": {"username": self.username}})
         self.client.send(request)
         self.hosted_games = []
-
+        self.lobby_id = None
         self.game = None
+        
+    def get_player(self):
+        for player in self.game.players:
+            if player.name == self.username:
+                return player
 
     def create_lobby(self):
         request = json.dumps({"type": "create_lobby", "data": {}})
@@ -33,6 +38,13 @@ class User:
     def start_game(self):
         request = json.dumps({"type": "start_game", "data": {}})
         self.client.send(request)
+        
+    def build_road(self, edge):
+        if (self.game.build_road(self.get_player(), edge)):
+            player = self.get_player()
+            request = json.dumps({"type": "check_permission", "data": {"edge": edge, "player": player.name, "lobby_id": self.lobby_id, "action": "build_road"}})
+            self.client.send(request)
+        
     
     def handle_messages(self):
         while not self.message_queue.empty():
@@ -43,11 +55,13 @@ class User:
             match message_type:
                 case "create_lobby":
                     lobby_id = response['data']['lobby_id']
+                    self.lobby_id = lobby_id
                     self.hosted_games.append(lobby_id)
                     self.ui.display_lobby(lobby_id, {"player_1": self.username})
                     self.ui.display_start_button()
                 case "join_lobby":
                     lobby_id = response['data']['lobby_id']
+                    self.lobby_id = lobby_id
                     players = response['data']['players']
                     self.ui.display_lobby(lobby_id, players)
                     if(lobby_id in self.hosted_games): self.ui.display_start_button() #if user is host, get the start button
@@ -57,6 +71,9 @@ class User:
                     self.ui.display_error(error_message, previous_screen, previous_buttons)
                 case "game_start":
                     self.game = ClientGame(self.ui, response['data']['jsondata'])
-                    self.ui.draw_game(self.game)
+                    self.ui.draw_hud(self.game)
+                case "road_created":
+                    # TODO
+                    pass
                 case _:
                     print("Unknown message type")

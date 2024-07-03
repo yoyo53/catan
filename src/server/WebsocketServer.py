@@ -3,8 +3,15 @@ import websockets
 import json
 import random
 import string
+from Road import Road
 from components.Response import Response,ErrorMessage
 from components.LobbyManager import LobbyManager
+import sys
+
+sys.path.append('..')
+
+from lib.map.Corner import Corner
+from lib.map.Edge import Edge
 
 class WebsocketServer:
     def __init__(self, port):
@@ -54,6 +61,8 @@ class WebsocketServer:
                     return await self.join_lobby(request,client)
                 case "start_game":
                     return await self.start_game(client)
+                case "check_permission":
+                    return await self.check_permission(request,client)
                 case _:
                     error = ErrorMessage(0,"Unknown message type")
                     return error.to_json()
@@ -116,7 +125,48 @@ class WebsocketServer:
             ws = self.clients[client_id]
             await ws.send(response.to_json())
         return response.to_json()
+    
+    def check_permission(self, request, client):
+        request_data_action = request['data']['action']
+        match request_data_action:
+            case "build_road":
+                return self.build_road(request,client)
+            case _:
+                error = ErrorMessage(0,"Unknown action")
+                return error.to_json()
 
+    async def build_road(self, request, client):
+        lobby_id = request['data']['lobby_id']
+        lobby = self.lobby_manager.get_lobby(lobby_id)
+        corner1 = Corner(*request['data']['edge']['corner1'])
+        corner2 = Corner(*request['data']['edge']['corner2'])
+        
+        for c in lobby.game.map.corners:
+            if c == corner1:
+                corner1 = c
+            if c == corner2:
+                corner2 = c
+        edge = Edge(corner1,corner2)
+        for e in lobby.game.map.edges:
+            if e == edge:
+                edge = e
+        
+        player_name = request['data']['player']
+        for p in lobby.game.players:
+            if p.name == player_name:
+                player = p
+        if (lobby.game.check_build_road(player, edge)):
+            lobby.game.map.roads.append(Road(player, edge))
+            player.resources["brick"] -= 1
+            player.resources["wood"] -= 1
+            response = Response(1, "road_created", edge=edge.to_json(), player=player.to_json())
+            for client_id in lobby.clients.values():
+                ws = self.clients[client_id]
+                await ws.send(response.to_json()) # TODO
+        else:
+            response = ErrorMessage(0,"You can't build a road here")
+        return response.to_json()
+        
         
         
 

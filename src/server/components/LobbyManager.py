@@ -40,7 +40,8 @@ class Lobby:
             self.game.players.append(PlayerServ(client))
 
         return self.game.to_json()
-            
+    
+     
         
 
 class LobbyManager:

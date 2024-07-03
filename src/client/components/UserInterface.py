@@ -17,7 +17,7 @@ class UserInterface:
         self.colors = Colors()
         self.WINDOW_WIDTH = window_width
         self.WINDOW_HEIGHT = window_height
-        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))  # Peut être défini en plein écran avec pygame.FULLSCREEN
+        self.screen = pygame.display.set_mode((1920, 1080))  # Peut être défini en plein écran avec pygame.FULLSCREEN
         self.font = pygame.font.Font(None, 36)
         self.buttons = []
         pygame.display.set_caption('CATAN - Multijoueur')
@@ -148,11 +148,16 @@ class UserInterface:
             if button.is_clicked(event.pos):
                 return button
         return None
+    
     def draw_map(self, map):
         clientMap = ClientMap(map, self)
         clientMap.draw()
 
-    def draw_game(self, game):
+    def draw_hud(self, game):
         self.screen.fill(self.colors.BLACK)
         game.map.draw()
+        road_button = Button(self.screen, self.colors.RED, 500, 500, 50, 50, "Construire une route", self.colors.WHITE)
+        road_button.draw()
+        self.buttons.append(road_button)
         pygame.display.flip()
+
