@@ -156,3 +156,20 @@ class UserInterface:
         self.screen.fill(self.colors.BLACK)
         game.map.draw()
         pygame.display.flip()
+
+    def display_turn_order(self, turn_order):
+        y_offset = 50
+        for player in turn_order:
+            player_name = player[0]
+            order = player[1]
+            turn_order_text = self.font.render(f"{player_name} - {order}", True, self.colors.WHITE)
+            text_width = turn_order_text.get_width()
+            x = self.WINDOW_WIDTH - text_width - 50
+            y = y_offset
+            self.screen.blit(turn_order_text, (x, y))
+            y_offset += 50
+
+    def display_end_turn_button(self):
+        end_turn_button = Button(self.screen, self.colors.ORE, self.WINDOW_WIDTH - 250, self.WINDOW_HEIGHT - 100, 250, 50, "Terminer le tour", self.colors.WHITE)
+        end_turn_button.draw()
+        self.buttons.append(end_turn_button)

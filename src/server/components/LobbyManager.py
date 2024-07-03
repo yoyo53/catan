@@ -14,6 +14,7 @@ class Lobby:
         self.clients = {}
         self.status = "waiting"
         self.game = None
+        self.turn_order = []
         
     def generate_lobby_id(self,length):
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
@@ -40,8 +41,6 @@ class Lobby:
 
         return self.game.to_json()
             
-        
-        
     def cycle_player(self):
         #should not happen, but just in case
         if len(self.turn_order) != 0:

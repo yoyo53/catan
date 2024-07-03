@@ -54,6 +54,8 @@ class WebsocketServer:
                     return await self.join_lobby(request,client)
                 case "start_game":
                     return await self.start_game(client)
+                case "get_turn_order":
+                    return await self.get_turn_order(client)
                 case _:
                     error = ErrorMessage(0,"Unknown message type")
                     return error.to_json()
@@ -115,10 +117,11 @@ class WebsocketServer:
         for client_id in lobby.clients.values():
             ws = self.clients[client_id]
             await ws.send(response.to_json())
+
         return response.to_json()
         
-    async def get_turn_order(self,lobby_id):
-        lobby = self.lobby_manager.get_lobby(lobby_id)
+    async def get_turn_order(self,client):
+        lobby = self.lobby_manager.get_lobby_by_client(client)
         lobby.cycle_player()
         for client_id in lobby.clients.values():
             ws = self.clients[client_id]
