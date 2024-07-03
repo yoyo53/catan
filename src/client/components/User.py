@@ -33,6 +33,10 @@ class User:
     def start_game(self):
         request = json.dumps({"type": "start_game", "data": {}})
         self.client.send(request)
+
+    def get_turn_order(self):
+        request = json.dumps({"type": "get_turn_order", "data": {}})
+        self.client.send(request)
     
     def handle_messages(self):
         while not self.message_queue.empty():
@@ -59,11 +63,8 @@ class User:
                     self.game = ClientGame(self.ui, response['data']['jsondata'])
                     self.ui.draw_game(self.game)
                 case "turn_order":
-                    turn_order = response['data']['turn_order']
-                    for player in turn_order:
-                        player_name = player[0]
-                        order = player[1]
-                        print(f"Player: {player_name}, Order: {order}")
+                    self.game.turn_order = response['data']['turn_order']
+                    self.ui.display_turn_order(self.game.turn_order)
                 case _:
                     print("Unknown message type")
                     print(response)

@@ -28,6 +28,7 @@ if __name__ == "__main__":
                         user.join_lobby(lobby_id)
                     elif clicked_button.text == "Lancer la partie":
                         user.start_game()
+                        user.get_turn_order()
                     
 
         user.handle_messages()
