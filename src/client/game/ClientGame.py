@@ -4,6 +4,7 @@ import pygame
 import sys
 
 sys.path.append('..')
+from client.components.Colors import Colors
 from lib.Game import Game
 from lib.Player import Player
 from game.ClientMap import ClientMap
@@ -15,6 +16,8 @@ class ClientGame(Game):
         self.status = "start"
         self.ui = UI
         self.creategame(jsongame)
+        self.colors = Colors()
+        self.p_colors = {"player_1" : self.colors.RED, "player_2" : self.colors.BLUE, "player_3" : self.colors.GREEN, "player_4" : self.colors.PURPLE}
 
     def creategame(self, json):
         # JSON IN THIS FORMAT :

@@ -159,10 +159,10 @@ class WebsocketServer:
             lobby.game.map.roads.append(Road(player, edge))
             player.resources["brick"] -= 1
             player.resources["wood"] -= 1
-            response = Response(1, "road_created", edge=edge.to_json(), player=player.to_json())
+            response = Response(1, "road_created", edge=edge.to_json(), player=player.to_json()) # TODO
             for client_id in lobby.clients.values():
                 ws = self.clients[client_id]
-                await ws.send(response.to_json()) # TODO
+                await ws.send(response.to_json())
         else:
             response = ErrorMessage(0,"You can't build a road here")
         return response.to_json()
