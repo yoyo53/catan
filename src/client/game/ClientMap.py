@@ -16,6 +16,7 @@ class ClientMap(Map):
     def draw(self):
         for tile in self.tiles:
             self.draw_hex(tile)
+        self.draw_roads()
             
     def draw_hex(self, tile):
         center = self.center_to_pixel(tile, self.ui.screen)
@@ -56,3 +57,31 @@ class ClientMap(Map):
             tile = self.gettile(jsontile["x"], jsontile["y"])
             tile.type = jsontile["type"]
             tile.number = jsontile["number"]
+            
+    def draw_roads(self):
+        for road in self.roads:
+            start_corner = road.edge.corners[0]
+            end_corner = road.edge.corners[1]
+            start_pixel = self.corner_to_pixel(start_corner, self.ui.screen)
+            end_pixel = self.corner_to_pixel(end_corner, self.ui.screen)
+            pygame.draw.line(self.ui.screen, road.player.color, start_pixel, end_pixel, 5)
+
+    def get_edge_from_click(self, pos):
+        for edge in self.edges:
+            start_corner = edge.corners[0]
+            end_corner = edge.corners[1]
+            start_pixel = self.corner_to_pixel(start_corner, self.ui.screen)
+            end_pixel = self.corner_to_pixel(end_corner, self.ui.screen)
+            center_x = (start_pixel[0] + end_pixel[0]) / 2
+            center_y = (start_pixel[1] + end_pixel[1]) / 2
+            radius = 40 #((end_pixel[0] - start_pixel[0]) + (end_pixel[1] - start_pixel[1])) / 2
+            hit_box = pygame.Rect(center_x - radius, center_y - radius, 2 * radius, 2 * radius)
+            pygame.draw.circle(self.ui.screen, (0, 0, 0), (int(center_x), int(center_y)), int(radius), 1)
+            if hit_box.collidepoint(pos):
+                return edge
+        return None
+    
+    def point_to_pixel(self, point, surface):
+        center_x = surface.get_width() / 2 + (point.x * self.radius_hex * 1.75)
+        center_y = surface.get_height() / 2 - (point.y * self.radius_hex)
+        return (center_x, center_y)

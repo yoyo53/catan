@@ -14,6 +14,7 @@ class Lobby:
         self.clients = {}
         self.status = "waiting"
         self.game = None
+        self.turn_order = []
         
     def generate_lobby_id(self,length):
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
@@ -30,7 +31,6 @@ class Lobby:
         player_number = "player_" + str(len(self.clients) + 1)
         self.clients[player_number] = client_id
         response = Response(1, "success")
-
         
         return response.to_json()
     
@@ -40,9 +40,19 @@ class Lobby:
             self.game.players.append(PlayerServ(client))
 
         return self.game.to_json()
-    
-     
-        
+            
+    def cycle_player(self):
+        #should not happen, but just in case
+        if len(self.turn_order) != 0:
+            self.turn_order.clear()
+
+        turn_order = list(range(1, len(self.clients) + 1))
+        random.shuffle(turn_order)
+
+        for client_id, order in zip(self.clients.values(), turn_order):
+            self.turn_order.append((client_id, order))
+
+        print(self.turn_order)
 
 class LobbyManager:
     def __init__(self):

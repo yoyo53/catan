@@ -3,8 +3,15 @@ from WebsocketClient import WebsocketClient
 import time
 import json
 from queue import Queue
+import sys
+
+sys.path.append('..')
+
 
 from game.ClientGame import ClientGame
+from lib.map.Edge import Edge
+from lib.Road import Road
+
 
 SERVER_URL = "ws://127.0.0.1:8765"
 
@@ -24,7 +31,7 @@ class User:
         
     def get_player(self):
         for player in self.game.players:
-            if player.name == self.username:
+            if player.name.split("#")[0] == self.username:
                 return player
 
     def create_lobby(self):
@@ -40,11 +47,15 @@ class User:
         self.client.send(request)
         
     def build_road(self, edge):
-        if (self.game.build_road(self.get_player(), edge)):
+        if (self.game.check_build_road(self.get_player(), edge)):
+            print("Building road")
             player = self.get_player()
-            request = json.dumps({"type": "check_permission", "data": {"edge": edge, "player": player.name, "lobby_id": self.lobby_id, "action": "build_road"}})
+            request = json.dumps({"type": "check_permission", "data": {"edge": {"corner1": (edge.corner1.x, edge.corner1.y), "corner2": (edge.corner2.x, edge.corner2.y)}, "player": player.name, "lobby_id": self.lobby_id, "action": "build_road"}})
             self.client.send(request)
-        
+    
+    def get_turn_order(self):
+        request = json.dumps({"type": "get_turn_order", "data": {}})
+        self.client.send(request)
     
     def handle_messages(self):
         while not self.message_queue.empty():
@@ -73,7 +84,17 @@ class User:
                     self.game = ClientGame(self.ui, response['data']['jsondata'])
                     self.ui.draw_hud(self.game)
                 case "road_created":
-                    # TODO
-                    pass
+                    player = self.get_player()
+                    player_json = response['data']['player']
+                    player.from_json(player_json)
+                    edge_json = response['data']['edge']
+                    edge_new = Edge().from_json(edge_json)
+                    for edge in self.game.map.edges:
+                        if edge == edge_new:
+                            edge = edge_new
+                    self.game.map.roads.append(Road(player, edge))
+                case "turn_order":
+                    self.game.turn_order = response['data']['turn_order']
+                    self.ui.display_turn_order(self.game.turn_order)
                 case _:
                     print("Unknown message type")
