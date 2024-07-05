@@ -5,6 +5,7 @@ import json
 from queue import Queue
 
 from game.ClientGame import ClientGame
+from game.ClientLobby import ClientLobby
 
 SERVER_URL = "ws://127.0.0.1:8765"
 
@@ -14,13 +15,13 @@ class User:
         self.client = WebsocketClient(SERVER_URL, self.message_queue)
         self.username = username
         self.ui = ui
+        self.ui.user = self
         Thread(target=self.client.start).start()
         time.sleep(0.5)
         request = json.dumps({"type": "greeting", "data": {"username": self.username}})
         self.client.send(request)
         self.hosted_games = []
         self.lobby = None
-        self.game = None
 
     def create_lobby(self):
         request = json.dumps({"type": "create_lobby", "data": {}})
@@ -46,22 +47,24 @@ class User:
             message_type = response['data']['type']
             match message_type:
                 case "create_lobby":
-                    lobby_id = response['data']['lobby_id']
-                    self.hosted_games.append(lobby_id)
-                    self.lobby_id = lobby_id
+                    lobby_json = response['data']['lobby']
+                    client_lobby = ClientLobby()
+                    client_lobby.from_json(lobby_json)
+                    self.lobby = client_lobby
+                    self.hosted_games.append(self.lobby.lobby_id)
                     self.ui.change_state("lobby")
                 case "join_lobby":
-                    lobby_id = response['data']['lobby_id']
-                    players = response['data']['players']
+                    lobby_json = response['data']['lobby']
+                    client_lobby = ClientLobby()
+                    client_lobby.from_json(lobby_json)
+                    self.lobby = client_lobby
                     self.ui.change_state("lobby")
-                    if(lobby_id in self.hosted_games): self.ui.display_start_button() #if user is host, get the start button
                 case "error":
                     error_message = response['data']['error_message']
-                    previous_screen, previous_buttons = self.ui.screen_copy()  # Take a snapshot of the current screen and buttons
-                    self.ui.display_error(error_message, previous_screen, previous_buttons)
+                    self.ui.error = error_message
                 case "game_start":
                     self.game = ClientGame(self.ui, response['data']['jsondata'])
-                    self.ui.draw_game(self.game)
+                    self.ui.change_state("game_started")
                 case "turn_order":
                     self.game.turn_order = response['data']['turn_order']
                     self.ui.display_turn_order(self.game.turn_order)
