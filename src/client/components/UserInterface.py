@@ -21,6 +21,7 @@ class UserInterface:
         self.font = pygame.font.Font(None, 36)
         self.buttons = []
         pygame.display.set_caption('CATAN - Multijoueur')
+        self.status = "main_menu"
     
     def screen_copy(self):
         screen_snapshot = self.screen.copy()
@@ -36,7 +37,6 @@ class UserInterface:
         pygame.display.flip()
 
     def display_main_menu(self):
-        self.screen.fill(self.colors.BLACK)
         create_lobby_button = Button(self.screen,self.colors.WHEAT,100,100,250,50,"Créer un lobby",self.colors.WHITE)
         join_lobby_button = Button(self.screen,self.colors.ORE,100,200,250,50,"Rejoindre un lobby",self.colors.WHITE)
         join_lobby_button.draw()
@@ -173,3 +173,19 @@ class UserInterface:
         end_turn_button = Button(self.screen, self.colors.ORE, self.WINDOW_WIDTH - 250, self.WINDOW_HEIGHT - 100, 250, 50, "Terminer le tour", self.colors.WHITE)
         end_turn_button.draw()
         self.buttons.append(end_turn_button)
+
+    def draw(self):
+        match self.status:
+            case "main_menu":
+                self.display_main_menu()
+            case "lobby":
+                self.display_lobby()
+            case "game_started":
+                self.draw_game()
+            case _:
+                print("Unknown status")
+                print(self.status)
+
+    def change_state(self, state):
+        self.screen.fill(self.colors.BLACK)
+        self.status = state

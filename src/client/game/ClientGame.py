@@ -15,6 +15,7 @@ class ClientGame(Game):
         self.status = "start"
         self.ui = UI
         self.creategame(jsongame)
+        self.lobby_id = None
 
     def creategame(self, json):
         # JSON IN THIS FORMAT :
