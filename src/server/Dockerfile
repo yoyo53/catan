@@ -17,7 +17,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 WORKDIR /app
 
 ADD ./server ./server
-ADD ./class-lib ./class-lib
+ADD ./lib ./lib
 
 WORKDIR ./server
 CMD python WebsocketServer.py
