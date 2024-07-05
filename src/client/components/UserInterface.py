@@ -158,10 +158,6 @@ class UserInterface:
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     return event.pos
-    
-    def draw_map(self, map):
-        clientMap = ClientMap(map, self)
-        clientMap.draw()
 
     def draw_hud(self, game):
         self.screen.fill(self.colors.BLACK)

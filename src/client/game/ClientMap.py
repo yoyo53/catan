@@ -57,14 +57,6 @@ class ClientMap(Map):
             tile = self.gettile(jsontile["x"], jsontile["y"])
             tile.type = jsontile["type"]
             tile.number = jsontile["number"]
-            
-    def draw_roads(self):
-        for road in self.roads:
-            start_corner = road.edge.corners[0]
-            end_corner = road.edge.corners[1]
-            start_pixel = self.corner_to_pixel(start_corner, self.ui.screen)
-            end_pixel = self.corner_to_pixel(end_corner, self.ui.screen)
-            pygame.draw.line(self.ui.screen, road.player.color, start_pixel, end_pixel, 5)
 
     def get_edge_from_click(self, pos):
         for edge in self.edges:
@@ -81,7 +73,12 @@ class ClientMap(Map):
                 return edge
         return None
     
-    def point_to_pixel(self, point, surface):
-        center_x = surface.get_width() / 2 + (point.x * self.radius_hex * 1.75)
-        center_y = surface.get_height() / 2 - (point.y * self.radius_hex)
-        return (center_x, center_y)
+    def draw_roads(self):
+        print("Roads ?")
+        for road in self.roads:
+            print("Road", road)
+            start_corner = road.edge.corners[0]
+            end_corner = road.edge.corners[1]
+            start_pixel = self.corner_to_pixel(start_corner, self.ui.screen)
+            end_pixel = self.corner_to_pixel(end_corner, self.ui.screen)
+            pygame.draw.line(self.ui.screen, road.owner.color, start_pixel, end_pixel, 10)

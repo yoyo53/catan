@@ -32,13 +32,14 @@ if __name__ == "__main__":
                     elif clicked_button.text == "Construire une route":
                         mouse_click = UI.wait_for_click()
                         edge = user.game.map.get_edge_from_click(mouse_click)
+                        print("Edge clicked", edge)
                         if edge:
                             user.build_road(edge)
-                        
+                        UI.draw_hud(user.game)
+
                     
 
         user.handle_messages()
-
         pygame.display.update()
         UI.clock.tick(UI.fps)
 
