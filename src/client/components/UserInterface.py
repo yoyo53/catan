@@ -17,7 +17,7 @@ class UserInterface:
         self.colors = Colors()
         self.WINDOW_WIDTH = window_width
         self.WINDOW_HEIGHT = window_height
-        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))  # Peut être défini en plein écran avec pygame.FULLSCREEN
+        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.FULLSCREEN)  # Peut être défini en plein écran avec pygame.FULLSCREEN
         self.font = pygame.font.Font(None, 36)
         self.buttons = []
         pygame.display.set_caption('CATAN - Multijoueur')
