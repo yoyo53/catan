@@ -11,7 +11,6 @@ if __name__ == "__main__":
     username = UI.draw_text_input_box("Pseudo", 50, 50, 50, 50) 
     user = User(username, UI)
     
-    UI.display_main_menu()
     
     running = True
     while running:
@@ -32,6 +31,7 @@ if __name__ == "__main__":
                     
 
         user.handle_messages()
+        UI.draw()
 
         pygame.display.update()
         UI.clock.tick(UI.fps)
