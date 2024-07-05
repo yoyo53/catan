@@ -84,7 +84,7 @@ class WebsocketServer:
         lobby_id = self.lobby_manager.create_lobby()
         lobby = self.lobby_manager.get_lobby(lobby_id)
         lobby.join_lobby(client)
-        response = Response(1, "create_lobby",lobby_id=lobby_id)
+        response = Response(1, "create_lobby",lobby=lobby.to_json())
         return response.to_json()
     
     async def join_lobby(self,request, client_id):
@@ -100,21 +100,21 @@ class WebsocketServer:
             return json.dumps(join_attempt)
 
         #to notice all clients that someone just joined the lobby
-        response = Response(1, "join_lobby",lobby_id=lobby_id, players=lobby.clients)
-        for client_id in lobby.clients.values():
+        response = Response(1, "join_lobby",lobby=lobby.to_json())
+        for client_id in lobby.players.values():
             ws = self.clients[client_id]
             await ws.send(response.to_json())
         return response.to_json()
     
     async def start_game(self,client):
         lobby = self.lobby_manager.get_lobby_by_client(client)
-        if(lobby.clients['player_1'] != client):
+        if(lobby.players['player_1'] != client):
             response = ErrorMessage(0,"You are not the host")
             return response.to_json()
         
         jsondata = lobby.start_game()
         response = Response(666,"game_start",jsondata = jsondata)
-        for client_id in lobby.clients.values():
+        for client_id in lobby.players.values():
             ws = self.clients[client_id]
             await ws.send(response.to_json())
 
@@ -122,11 +122,12 @@ class WebsocketServer:
         
     async def get_turn_order(self,client):
         lobby = self.lobby_manager.get_lobby_by_client(client)
-        lobby.cycle_player()
-        for client_id in lobby.clients.values():
+        lobby.generate_turn_order()
+        for client_id in lobby.players.values():
             ws = self.clients[client_id]
             response = Response(1, "turn_order", turn_order=lobby.turn_order)
             await ws.send(response.to_json())
+        return response.to_json()
         
 
 if __name__ == "__main__":
