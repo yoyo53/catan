@@ -28,8 +28,13 @@ if __name__ == "__main__":
                         user.join_lobby(lobby_id)
                     elif clicked_button.text == "Lancer la partie":
                         user.start_game()
+                        user.get_turn_order()
                     elif clicked_button.text == "Construire une route":
-                        user.build_road()
+                        mouse_click = UI.wait_for_click()
+                        edge = user.game.map.get_edge_from_click(mouse_click)
+                        if edge:
+                            user.build_road(edge)
+                        
                     
 
         user.handle_messages()

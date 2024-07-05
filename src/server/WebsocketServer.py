@@ -3,7 +3,6 @@ import websockets
 import json
 import random
 import string
-from Road import Road
 from components.Response import Response,ErrorMessage
 from components.LobbyManager import LobbyManager
 import sys
@@ -12,6 +11,7 @@ sys.path.append('..')
 
 from lib.map.Corner import Corner
 from lib.map.Edge import Edge
+from lib import Road
 
 class WebsocketServer:
     def __init__(self, port):
@@ -62,7 +62,10 @@ class WebsocketServer:
                 case "start_game":
                     return await self.start_game(client)
                 case "check_permission":
+                    print("I'm in love with the coco")
                     return await self.check_permission(request,client)
+                case "get_turn_order":
+                    return await self.get_turn_order(client)
                 case _:
                     error = ErrorMessage(0,"Unknown message type")
                     return error.to_json()
@@ -128,6 +131,7 @@ class WebsocketServer:
     
     def check_permission(self, request, client):
         request_data_action = request['data']['action']
+        print("I'm in love with the coco")
         match request_data_action:
             case "build_road":
                 return self.build_road(request,client)
@@ -155,6 +159,8 @@ class WebsocketServer:
         for p in lobby.game.players:
             if p.name == player_name:
                 player = p
+        player.resources.bricks = 10
+        player.resources.wood = 10
         if (lobby.game.check_build_road(player, edge)):
             lobby.game.map.roads.append(Road(player, edge))
             player.resources["brick"] -= 1
@@ -168,6 +174,14 @@ class WebsocketServer:
         return response.to_json()
         
         
+    async def get_turn_order(self,client):
+        lobby = self.lobby_manager.get_lobby_by_client(client)
+        lobby.cycle_player()
+        for client_id in lobby.clients.values():
+            ws = self.clients[client_id]
+            response = Response(1, "turn_order", turn_order=lobby.turn_order)
+            await ws.send(response.to_json())
+        return response.to_json()
         
 
 if __name__ == "__main__":

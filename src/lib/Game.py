@@ -82,11 +82,13 @@ class Game:
         return False
     
 
-    def check_build_road(self, player, edge) -> bool:
+    def check_build_road(self, player, edge : Edge) -> bool:      
         if edge.road is None:
-            if edge.corner in [c for r in player.roads for c in r.edge.corners]: # TO VERIFY HERE
-                if (player.resources["brick"] >= 1) and (player.resources["wood"] >= 1):
-                    return True
+            #if edge.corners in [c for r in player.roads for c in r.edge.corners]: # TO VERIFY HERE
+            player.resources["brick"] += 1
+            player.resources["wood"] += 1 
+            if (player.resources["brick"] >= 1) and (player.resources["wood"] >= 1):
+                return True
         return False
     
     def build_city(self, player, corner) -> bool:
