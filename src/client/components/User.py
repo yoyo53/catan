@@ -50,7 +50,7 @@ class User:
         if (self.game.check_build_road(self.get_player(), edge)):
             print("Building road")
             player = self.get_player()
-            request = json.dumps({"type": "check_permission", "data": {"edge": {"corner1": (edge.corner1.x, edge.corner1.y), "corner2": (edge.corner2.x, edge.corner2.y)}, "player": player.name, "lobby_id": self.lobby_id, "action": "build_road"}})
+            request = json.dumps({"type": "check_permission", "data": {"edge": {"corner1": (edge.corners[0].x, edge.corners[0].y), "corner2": (edge.corners[1].x, edge.corners[1].y)}, "player": player.name, "lobby_id": self.lobby_id, "action": "build_road"}})
             self.client.send(request)
     
     def get_turn_order(self):
@@ -88,11 +88,17 @@ class User:
                     player_json = response['data']['player']
                     player.from_json(player_json)
                     edge_json = response['data']['edge']
-                    edge_new = Edge().from_json(edge_json)
+                    edge_new = Edge.from_json(edge_json)
+                    print("Edge receive", edge_new)
                     for edge in self.game.map.edges:
-                        if edge == edge_new:
-                            edge = edge_new
-                    self.game.map.roads.append(Road(player, edge))
+                        if edge.equals_coords(edge_new):
+                            print("You find me !")
+                            edge_new = edge
+                    # TEST PURPOSE ONLY
+                    player.color = (255, 0, 0)
+                    # TEST PURPOSE ONLY
+                    self.game.map.roads.append(Road(player, edge_new))
+                    #print(self.game.map.roads)
                 case "turn_order":
                     self.game.turn_order = response['data']['turn_order']
                     self.ui.display_turn_order(self.game.turn_order)
