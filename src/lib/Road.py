@@ -11,3 +11,6 @@ class Road:
         if isinstance(value, Road):
             return self.owner == value.owner and self.edge == value.edge
         return False
+    
+    def __repr__(self) -> str:
+        return f"Road({self.owner}, {self.edge})"
