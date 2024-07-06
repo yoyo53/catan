@@ -9,6 +9,9 @@ class Colors:
         self.BRICK = (139,69,19)
         self.DESERT = (210,180,149)
         self.RED = (255,0,0)
+        self.BLUE = (0,0,255)
+        self.GREEN = (0,255,0)
+        self.PURPLE = (128,0,128)
         
     def get_color(self, tile_type):
         colors = {

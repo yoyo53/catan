@@ -17,7 +17,8 @@ class UserInterface:
         self.colors = Colors()
         self.WINDOW_WIDTH = window_width
         self.WINDOW_HEIGHT = window_height
-        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
+        #self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.FULLSCREEN)
         self.font = pygame.font.Font(None, 36)
         self.buttonmanager = ButtonManager(self.screen, self.colors)
         pygame.display.set_caption('CATAN - Multijoueur')
@@ -79,7 +80,7 @@ class UserInterface:
             error_popup_height - 50
         )
 
-        close_button = Button(self.screen, self.colors.RED,
+        close_button = Button("close_button", self.screen, self.colors.RED,
                               (self.WINDOW_WIDTH // 2) - 50,
                               (self.WINDOW_HEIGHT // 2) + 10,
                               100, 40,
@@ -127,13 +128,32 @@ class UserInterface:
             if button.is_clicked(event.pos):
                 return button
         return None
-
+    def wait_for_click(self):
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    return event.pos
+    def draw_hud(self, game):
+        self.screen.fill(self.colors.BLACK)
+        game.map.draw()
+        road_button = Button("create_road", self.screen, self.colors.RED, 500, 500, 50, 50, "Construire une route", self.colors.WHITE)
+        road_button.draw()
+        self.buttons.append(road_button)
+        pygame.display.flip()
     def draw_map(self, map):
         clientMap = ClientMap(map, self)
         clientMap.draw()
 
     def draw_game(self, game):
+        #self.screen.fill(self.colors.BLACK)
         game.map.draw()
+        #road_button = Button(self.screen, self.colors.RED, 500, 500, 50, 50, "Construire une route", self.colors.WHITE)
+        #road_button.draw()
+        #self.buttons.append(road_button)
         pygame.display.flip()
 
     def display_turn_order(self, turn_order):
@@ -148,6 +168,10 @@ class UserInterface:
             self.screen.blit(turn_order_text, (x, y))
             y_offset += 50
 
+    def display_end_turn_button(self):
+        end_turn_button = Button("end_turn", self.screen, self.colors.ORE, self.WINDOW_WIDTH - 250, self.WINDOW_HEIGHT - 100, 250, 50, "Terminer le tour", self.colors.WHITE)
+        end_turn_button.draw()
+        self.buttons.append(end_turn_button)
     def draw(self):
         match self.status:
             case "main_menu":
@@ -158,6 +182,7 @@ class UserInterface:
                     self.buttonmanager.start_game_button()
             case "game_started":
                 self.draw_game(self.user.game)
+                self.buttonmanager.create_road_button()
             case _:
                 print("Unknown status")
                 print(self.status)

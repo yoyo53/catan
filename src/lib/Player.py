@@ -34,3 +34,23 @@ class Player:
     
     def json_to_buldings(self, json):
         pass
+    
+    def to_json(self):
+        return {
+            "name": self.name,
+            "resources": self.resources,
+            "buildings": self.buildings,
+            "roads": self.roads,
+            "victory_points": self.points,
+            "largest_army": self.largest_army,
+            "longest_road": self.longest_road,
+        }
+        
+    def from_json(self, json):
+        self.name = json['name']
+        self.resources = json['resources']
+        self.buildings = json['buildings']
+        self.roads = json['roads']
+        self.points = json['victory_points']
+        self.largest_army = json['largest_army']
+        self.longest_road = json['longest_road']
