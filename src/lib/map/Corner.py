@@ -27,8 +27,9 @@ class Corner:
             "x": self.x,
             "y": self.y
         }
-        
-    def from_json(self, json):
-        self.x = json['x']
-        self.y = json['y']
-        return self
+      
+    staticmethod  
+    def from_json(json):
+        x = json['x']
+        y = json['y']
+        return Corner(x, y)
