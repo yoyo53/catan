@@ -12,6 +12,7 @@ sys.path.append('..')
 from lib.map.Corner import Corner
 from lib.map.Edge import Edge
 from lib.Road import Road
+from lib.Road import Road
 
 class WebsocketServer:
     def __init__(self, port):
@@ -62,7 +63,6 @@ class WebsocketServer:
                 case "start_game":
                     return await self.start_game(client)
                 case "check_permission":
-                    print("I'm in love with the coco")
                     return await self.check_permission(request,client)
                 case "get_turn_order":
                     return await self.get_turn_order(client)
@@ -131,7 +131,6 @@ class WebsocketServer:
     
     def check_permission(self, request, client):
         request_data_action = request['data']['action']
-        print("I'm in love with the coco")
         match request_data_action:
             case "build_road":
                 return self.build_road(request,client)
@@ -165,8 +164,8 @@ class WebsocketServer:
             lobby.game.map.roads.append(Road(player, edge))
             player.resources["brick"] -= 1
             player.resources["wood"] -= 1
-            response = Response(1, "road_created", edge=edge.to_json(), player=player.to_json()) # TODO
-            for client_id in lobby.players.values():
+            response = Response(1, "road_created", edge=edge.to_json(), player=player.to_json())
+            for client_id in lobby.clients.values():
                 ws = self.clients[client_id]
                 await ws.send(response.to_json())
         else:

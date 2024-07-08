@@ -27,6 +27,11 @@ class Edge:
             "corner2": self.corners[1].to_json()
         }
         
-    def from_json(self, json):
-        self.corners = [Corner(*json['corner1']), Corner(*json['corner2'])]
-        return self
+    def equals_coords(self, edge2):
+        return self.corners[0].x == edge2.corners[0].x and self.corners[0].y == edge2.corners[0].y and self.corners[1].x == edge2.corners[1].x and self.corners[1].y == edge2.corners[1].y
+    
+    staticmethod
+    def from_json(json):
+        corner1 = Corner.from_json(json['corner1'])
+        corner2 = Corner.from_json(json['corner2'])
+        return Edge(corner1, corner2)
