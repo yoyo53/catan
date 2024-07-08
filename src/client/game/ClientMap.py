@@ -73,6 +73,6 @@ class ClientMap(Map):
             print("Road", road)
             start_corner = road.edge.corners[0]
             end_corner = road.edge.corners[1]
-            start_pixel = self.corner_to_pixel(start_corner, self.ui.screen)
-            end_pixel = self.corner_to_pixel(end_corner, self.ui.screen)
+            start_pixel = self.corner_to_pixel(start_corner)
+            end_pixel = self.corner_to_pixel(end_corner)
             pygame.draw.line(self.ui.screen, road.owner.color, start_pixel, end_pixel, 10)

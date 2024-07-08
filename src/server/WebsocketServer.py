@@ -165,7 +165,7 @@ class WebsocketServer:
             player.resources["brick"] -= 1
             player.resources["wood"] -= 1
             response = Response(1, "road_created", edge=edge.to_json(), player=player.to_json())
-            for client_id in lobby.clients.values():
+            for client_id in lobby.players.values():
                 ws = self.clients[client_id]
                 await ws.send(response.to_json())
         else:
