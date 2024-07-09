@@ -15,10 +15,11 @@ import random
 class Game:
     def __init__(self):
         self.players : List[Player] = []
-        self.current_player = 0
+        self.current_player_turn = 1
         self.map = Map()
         self.dice = Dice()
         self.log = []
+        self.turn_order = [] # List of tuple (player_name, order)
 
         self.buildings = []
         self.roads = []
@@ -119,6 +120,15 @@ class Game:
             if edge.road is not None and edge.road.owner == player:
                 max_length = max(max_length, dfs(player, edge, visited, 0))
         return max_length
+    
+    def is_player_turn(self, player_number):
+        #print("TOur actuel :", self.current_player_turn, "player turn", player_number)
+        return self.current_player_turn == player_number
+    
+    def next_turn(self):
+        print("JE PRESSE NEXT TURN")
+        self.current_player_turn = (self.current_player_turn % len(self.players)) + 1
+        
     
 def main():
     game = Game()
