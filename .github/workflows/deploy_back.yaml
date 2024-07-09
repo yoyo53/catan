@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - src/server/**
-      - src/class-lib/**
+      - src/lib/**
 
 defaults:
   run:

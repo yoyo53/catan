@@ -1,48 +1,32 @@
 import pygame
-import math
 from components.Colors import Colors
-from components.Button import Button
 import sys
 from game.ClientMap import ClientMap
 
 sys.path.append('..')
 from lib.map.Map import Map
+from components.ButtonManager import ButtonManager
+from components.Button import Button
 
 
 class UserInterface:
-    def __init__(self,fps,window_width, window_height):
+    def __init__(self, fps, window_width, window_height):
         pygame.init()
         self.clock = pygame.time.Clock()
         self.fps = fps
         self.colors = Colors()
         self.WINDOW_WIDTH = window_width
         self.WINDOW_HEIGHT = window_height
-        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))  # Peut être défini en plein écran avec pygame.FULLSCREEN
+        self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
         self.font = pygame.font.Font(None, 36)
-        self.buttons = []
+        self.buttonmanager = ButtonManager(self.screen, self.colors)
         pygame.display.set_caption('CATAN - Multijoueur')
-    
-    def screen_copy(self):
-        screen_snapshot = self.screen.copy()
-        buttons_snapshot = self.buttons.copy()
-        return screen_snapshot, buttons_snapshot
-    
-    def restore_screen(self, screen_snapshot, buttons_snapshot):
-        self.screen.blit(screen_snapshot, (0, 0))
+        self.status = "main_menu"
+        self.user = None
+        self.error = None
+        self.buttons = []
+        
 
-        self.buttons = buttons_snapshot
-        for button in self.buttons:
-            button.draw()
-        pygame.display.flip()
-
-    def display_main_menu(self):
-        self.screen.fill(self.colors.BLACK)
-        create_lobby_button = Button(self.screen,self.colors.WHEAT,100,100,250,50,"Créer un lobby",self.colors.WHITE)
-        join_lobby_button = Button(self.screen,self.colors.ORE,100,200,250,50,"Rejoindre un lobby",self.colors.WHITE)
-        join_lobby_button.draw()
-        create_lobby_button.draw()
-        self.buttons.append(create_lobby_button)
-        self.buttons.append(join_lobby_button)
 
     def draw_text_input_box(self, prompt, x, y, width, height):
         input_box = pygame.Rect(x, y, width, height)
@@ -85,8 +69,8 @@ class UserInterface:
 
         self.screen.fill((0, 0, 0))
         return text
-    
-    def display_error(self, error_message, previous_screen, previous_buttons):
+
+    def display_error(self, error_message):
         error_popup_width = 400
         error_popup_height = 200
         error_popup_rect = pygame.Rect(
@@ -96,10 +80,10 @@ class UserInterface:
             error_popup_height - 50
         )
 
-        close_button = Button(self.screen, self.colors.RED, 
-                              (self.WINDOW_WIDTH // 2) - 50, 
-                              (self.WINDOW_HEIGHT // 2) + 10, 
-                              100, 40, 
+        close_button = Button(self.screen, self.colors.RED,
+                              (self.WINDOW_WIDTH // 2) - 50,
+                              (self.WINDOW_HEIGHT // 2) + 10,
+                              100, 40,
                               "Close", self.colors.WHITE)
 
         done = False
@@ -111,8 +95,8 @@ class UserInterface:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if close_button.is_clicked(event.pos):
                         done = True
+                        self.error = None
 
-            self.screen.blit(previous_screen, (0, 0))  
             pygame.draw.rect(self.screen, self.colors.WHEAT, error_popup_rect)
 
             error_text_surface = self.font.render(error_message, True, self.colors.BLACK)
@@ -123,37 +107,33 @@ class UserInterface:
 
             pygame.display.flip()
 
-        self.restore_screen(previous_screen, previous_buttons)
-
-    def display_lobby(self, lobby_id, players):
         self.screen.fill(self.colors.BLACK)
+
+    def display_lobby(self, lobby):
+        lobby_id = lobby.lobby_id
+        players = lobby.players
         lobby_text = self.font.render(f"Lobby ID: {lobby_id}", True, self.colors.WHITE)
         self.screen.blit(lobby_text, (50, 50))
-        
+
         y_offset = 100
-        for player_number,username in players.items():
+        for player_number, username in players.items():
             player_text = self.font.render(f"{player_number}: {username.split('#')[0]}", True, self.colors.WHITE)
             self.screen.blit(player_text, (50, y_offset))
             y_offset += 40
-        
+
         pygame.display.flip()
 
-    def display_start_button(self):
-        start_button = Button(self.screen, self.colors.WHEAT, self.WINDOW_WIDTH // 2, self.WINDOW_HEIGHT // 2 , 250, 50, "Lancer la partie", self.colors.WHITE)
-        start_button.draw()
-        self.buttons.append(start_button)
-    
     def handle_events(self, event):
-        for button in self.buttons:
+        for button in self.buttonmanager.buttons:
             if button.is_clicked(event.pos):
                 return button
         return None
+
     def draw_map(self, map):
         clientMap = ClientMap(map, self)
         clientMap.draw()
 
     def draw_game(self, game):
-        self.screen.fill(self.colors.BLACK)
         game.map.draw()
         pygame.display.flip()
 
@@ -170,6 +150,8 @@ class UserInterface:
             y_offset += 50
 
     def draw(self):
+        self.screen.fill(self.colors.BLACK)
+        self.buttonmanager.clear_buttons()
         match self.status:
             case "main_menu":
                 self.buttonmanager.create_main_menu_buttons()
@@ -179,16 +161,22 @@ class UserInterface:
                     self.buttonmanager.start_game_button()
             case "game_started":
                 self.draw_game(self.user.game)
+                self.display_turn_order(self.user.game.turn_order)
+                if self.user.game.is_player_turn(self.user.my_turn):
+                    self.buttonmanager.next_turn_button()
             case _:
                 print("Unknown status")
                 print(self.status)
         if self.error:
             self.display_error(self.error)
-        if self.user.game.turn_order:
-            self.display_turn_order(self.user.game.turn_order)
+        
+           
+            
+
+            
 
         self.buttonmanager.draw_buttons()
 
     def change_state(self, state):
-        self.screen.fill(self.colors.BLACK)
-        pygame.display.flip()
+        self.status = state
+        self.buttonmanager.clear_buttons()

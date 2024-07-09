@@ -15,7 +15,7 @@ class WebsocketServer:
     async def handler(self, ws):
         print("WebSocket client connected")
         greeting = await ws.recv()
-        self.register_client(greeting, ws)
+        await self.register_client(greeting, ws)
         while True:
             message = await ws.recv()
             response = await self.handle_message(message,ws)
@@ -54,6 +54,8 @@ class WebsocketServer:
                     return await self.join_lobby(request,client)
                 case "start_game":
                     return await self.start_game(client)
+                case "end_turn":
+                    return await self.end_turn(client)
                 case _:
                     error = ErrorMessage(0,"Unknown message type")
                     return error.to_json()
@@ -63,12 +65,14 @@ class WebsocketServer:
             return error.to_json()
 
 
-    def register_client(self, greeting, ws):
+    async def register_client(self, greeting, ws):
         message = json.loads(greeting)
         username = message['data']['username']
         id = self.generate_client_id(4)
         client_id = username + "#" + id
         self.clients[client_id] = ws
+        response = Response(1, "greeting", client_id=client_id)
+        await ws.send(response.to_json())
     
     def get_client(self,ws):
         for client_id in self.clients:
@@ -82,7 +86,7 @@ class WebsocketServer:
         lobby_id = self.lobby_manager.create_lobby()
         lobby = self.lobby_manager.get_lobby(lobby_id)
         lobby.join_lobby(client)
-        response = Response(1, "create_lobby",lobby_id=lobby_id)
+        response = Response(1, "create_lobby",lobby=lobby.to_json())
         return response.to_json()
     
     async def join_lobby(self,request, client_id):
@@ -98,32 +102,39 @@ class WebsocketServer:
             return json.dumps(join_attempt)
 
         #to notice all clients that someone just joined the lobby
-        response = Response(1, "join_lobby",lobby_id=lobby_id, players=lobby.clients)
-        for client_id in lobby.clients.values():
+        response = Response(1, "join_lobby",lobby=lobby.to_json())
+        for client_id in lobby.players.values():
             ws = self.clients[client_id]
             await ws.send(response.to_json())
         return response.to_json()
     
     async def start_game(self,client):
         lobby = self.lobby_manager.get_lobby_by_client(client)
-        lobby.generate_turn_order()
-        if(lobby.clients['player_1'] != client):
+        if(lobby.players['player_1'] != client):
             response = ErrorMessage(0,"You are not the host")
             return response.to_json()
         
         jsondata = lobby.start_game()
-        response = Response(666,"game_start",jsondata = jsondata)
-        for client_id in lobby.clients.values():
-            ws = self.clients[client_id]
-            await ws.send(response.to_json())
-        return response.to_json()
-        
-    async def get_turn_order(self,client):
-        lobby = self.lobby_manager.get_lobby_by_client(client)
+        lobby.game.generate_turn_order()
+        response = Response(666,"game_start",jsondata = jsondata, turn_order=lobby.game.turn_order)
         for client_id in lobby.players.values():
             ws = self.clients[client_id]
-            response = Response(1, "turn_order", turn_order=lobby.turn_order)
             await ws.send(response.to_json())
+
+        return response.to_json()
+    
+    async def end_turn(self,client):
+        lobby = self.lobby_manager.get_lobby_by_client(client)
+        client_turn = lobby.game.get_client_turn(client)
+        if(lobby.game.current_player_turn != client_turn):
+            response = ErrorMessage(0,"Not your turn")
+            return response.to_json()
+        
+        lobby.game.next_turn()
+        response = Response(1,"end_turn")
+        for client_id, ws in self.clients.items():
+            if client_id != client:
+                await ws.send(response.to_json())
         return response.to_json()
         
 
