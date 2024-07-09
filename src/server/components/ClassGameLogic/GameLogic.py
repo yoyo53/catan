@@ -1,4 +1,5 @@
 import sys
+import random
 #sys.path.append('..')
 
 from lib.map.Map import Map
@@ -44,6 +45,27 @@ class GameServ(Game):
             "players": [player.to_json() for player in self.players],
             "map": self.map_to_json()
         }
+
+    def generate_turn_order(self):
+        #should not happen, but just in case
+        if len(self.turn_order) != 0:
+            self.turn_order.clear()
+
+        for player in self.players:
+            print(player.name)
+
+        turn_order = list(range(1, len(self.players) + 1))
+        random.shuffle(turn_order) #ex : [1, 3, 2, 4]
+
+        for player, order in zip(self.players, turn_order):
+            self.turn_order.append((player.name, order))
+    
+    def get_client_turn(self, client):
+        for player_name, order in self.turn_order:
+            if player_name == client:
+                return order
+        return None
+
     
 class PlayerServ(Player):
     def __init__(self, *args, **kwargs):

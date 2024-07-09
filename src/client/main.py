@@ -11,7 +11,6 @@ if __name__ == "__main__":
     username = UI.draw_text_input_box("Pseudo", 50, 50, 50, 50) 
     user = User(username, UI)
     
-    UI.display_main_menu()
     
     running = True
     while running:
@@ -28,9 +27,12 @@ if __name__ == "__main__":
                         user.join_lobby(lobby_id)
                     elif clicked_button.text == "Lancer la partie":
                         user.start_game()
+                    elif clicked_button.text == "Tour suivant":
+                        user.end_turn()
                     
 
         user.handle_messages()
+        UI.draw()
 
         pygame.display.update()
         UI.clock.tick(UI.fps)
