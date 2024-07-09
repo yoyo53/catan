@@ -61,44 +61,31 @@ class Game:
             self.log(f"Player {player} stole 1 {resource} from player {chosenplayer}")
     
 
-    def build_settlement(self, player, corner) -> bool:
-        def canbuild(player, corner : Corner) -> bool:
+    def check_build_settlement(self, player, corner) -> bool:
+        if player.resources["wood"] >= 1 and player.resources["brick"] >= 1 and player.resources["sheep"] >= 1 and player.resources["wheat"] >= 1:
+            wecan = False
             for edge in corner.edges:
                 if edge.road is not None and edge.road.owner == player:
                     for c in edge.corners:
                         if c.building is not None:
                             return False
-                    return True
-            return False
-        
-        if canbuild(player, corner):
-            player.resources["brick"] -= 1
-            player.resources["wood"] -= 1
-            player.resources["sheep"] -= 1
-            player.resources["wheat"] -= 1
-            self.map.buildings.append(Building("settlement", corner, player))
-            self.log(f"Player {player} built a settlement at {corner}")
-            return True
+                    wecan = True
+            return wecan
         return False
     
+    def check_upgrade_settlement(self, player, corner) -> bool:
+        if corner.building is not None and corner.building.owner == player and corner.building.type == "settlement":
+            if player.resources["wheat"] >= 2 and player.resources["ore"] >= 3:
+                return True
+        return False
 
     def check_build_road(self, player, edge : Edge) -> bool:      
         if edge.road is None:
             #if edge.corners in [c for r in player.roads for c in r.edge.corners]: # TO VERIFY HERE
-            player.resources["brick"] += 1
-            player.resources["wood"] += 1 
             if (player.resources["brick"] >= 1) and (player.resources["wood"] >= 1):
                 return True
         return False
     
-    def build_city(self, player, corner) -> bool:
-        if corner.building is not None and corner.building.owner == player and corner.building.type == "settlement":
-            player.resources["wheat"] -= 2
-            player.resources["ore"] -= 3
-            corner.building.change_to_city()
-            self.log(f"Player {player} built a city at {corner}")
-            return True
-        return False
     
     def count_longest_road(self, player): # TO VERIFY HERE ===>  COPILOT (HARD)
         def dfs(player, edge, visited, length):

@@ -49,16 +49,16 @@ class PlayerServ(Player):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
     
-    def to_json(self):
-        return {
-            "name": self.name,
-            "resources": self.resources,
-            "buildings": self.buildings,
-            "roads": self.roads,
-            "victory_points": self.points,
-            "largest_army": self.largest_army,
-            "longest_road": self.longest_road,
-        }
+    #def to_json(self):
+    #    return {
+    #        "name": self.name,
+    #        "resources": self.resources,
+    #    #    "buildings": self.buildings,
+    #    #    "roads": self.roads,
+    #        "victory_points": self.points,
+    #        "largest_army": self.largest_army,
+    #        "longest_road": self.longest_road,
+    #    }
     
     def __eq__(self, other):
         if isinstance(other, PlayerServ):

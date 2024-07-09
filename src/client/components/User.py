@@ -11,6 +11,8 @@ sys.path.append('..')
 from game.ClientGame import ClientGame
 from game.ClientLobby import ClientLobby
 from lib.map.Edge import Edge
+from lib.map.Corner import Corner
+from lib.Building import Building
 from lib.Road import Road
 
 SERVER_URL = "ws://127.0.0.1:8765"
@@ -53,6 +55,20 @@ class User:
             player = self.player
             request = json.dumps({"type": "check_permission", "data": {"edge": {"corner1": (edge.corners[0].x, edge.corners[0].y), "corner2": (edge.corners[1].x, edge.corners[1].y)}, "player": player.name, "lobby_id": self.lobby.lobby_id, "action": "build_road"}})
             self.client.send(request)
+
+    def build_settlement(self, corner):
+        if (self.game.check_build_settlement(self.player, corner)):
+            print("Building settlement")
+            player = self.player
+            request = json.dumps({"type": "check_permission", "data": {"corner": (corner.x, corner.y), "player": player.name, "lobby_id": self.lobby.lobby_id, "action": "build_settlement"}})
+            self.client.send(request)
+
+    def upgrade_settlement(self, corner):
+        if (self.game.check_upgrade_settlement(self.player, corner)):
+            print("Upgrading settlement")
+            player = self.player
+            request = json.dumps({"type": "check_permission", "data": {"corner": (corner.x, corner.y), "player": player.name, "lobby_id": self.lobby.lobby_id, "action": "upgrade_settlement"}})
+            self.client.send(request)
     
     def get_turn_order(self):
         request = json.dumps({"type": "get_turn_order", "data": {}})
@@ -87,8 +103,6 @@ class User:
                     #self.ui.draw_game(self.game)
                     #self.ui.draw_hud(self.game)
                 case "road_created":
-                    for player in self.game.players:
-                        print(player.name)
                     player = self.player
                     player_json = response['data']['player']
                     player.from_json(player_json)
@@ -104,6 +118,30 @@ class User:
                     # TEST PURPOSE ONLY
                     self.game.map.roads.append(Road(player, edge_new))
                     #print(self.game.map.roads)
+                case "settlement_created":
+                    player = self.player
+                    player_json = response['data']['player']
+                    player.from_json(player_json)
+                    corner_json = Corner.from_json(response['data']['corner'])
+                    for corner in self.game.map.corners:
+                        if corner == corner_json:
+                            my_corner = corner
+
+                    self.game.map.buildings.append(Building("settlement", my_corner, player))
+
+                case "settlement_upgraded":
+                    player = self.player
+                    player_json = response['data']['player']
+                    player.from_json(player_json)
+                    corner_json = Corner.from_json(response['data']['corner'])
+                    for corner in self.game.map.corners:
+                        if corner == corner_json:
+                            my_corner = corner
+
+                    for building in self.game.map.buildings:
+                        if building.corner == my_corner:
+                            building.type = "city"
+
                 case "turn_order":
                     self.game.turn_order = response['data']['turn_order']
                     self.ui.display_turn_order(self.game.turn_order)

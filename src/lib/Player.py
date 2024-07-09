@@ -1,12 +1,12 @@
 class Player:
     def __init__(self, name):
         self.name = name
-        self.resources = {
-            "wood": 0,
-            "brick": 0,
-            "sheep": 0,
-            "wheat": 0,
-            "ore": 0
+        self.resources = { # FOR TESTING PURPOSES
+            "wood": 100,
+            "brick": 100,
+            "sheep": 100,
+            "wheat": 100,
+            "ore": 100
         }
         self.buildings = []
         self.roads = []
@@ -39,8 +39,8 @@ class Player:
         return {
             "name": self.name,
             "resources": self.resources,
-            "buildings": self.buildings,
             "roads": self.roads,
+        #    "buildings": self.buildings,
             "victory_points": self.points,
             "largest_army": self.largest_army,
             "longest_road": self.longest_road,
@@ -49,8 +49,8 @@ class Player:
     def from_json(self, json):
         self.name = json['name']
         self.resources = json['resources']
-        self.buildings = json['buildings']
-        self.roads = json['roads']
+        #self.roads = json['roads']
+        #self.buildings = json['buildings']
         self.points = json['victory_points']
         self.largest_army = json['largest_army']
         self.longest_road = json['longest_road']
