@@ -10,7 +10,7 @@ from lib.Player import Player
 from game.ClientMap import ClientMap
 
 class ClientGame(Game):
-    def __init__(self, UI, jsongame):
+    def __init__(self, UI, jsongame, user):
         super().__init__()
         self.map = ClientMap(UI)
         self.status = "start"
@@ -19,6 +19,10 @@ class ClientGame(Game):
         self.colors = Colors()
         self.p_colors = {"player_1" : self.colors.RED, "player_2" : self.colors.BLUE, "player_3" : self.colors.GREEN, "player_4" : self.colors.PURPLE}
         self.lobby_id = None
+
+        for player in self.players:
+            if player.name.startswith(user.username):
+                user.player = player
 
     def creategame(self, json):
         # JSON IN THIS FORMAT :

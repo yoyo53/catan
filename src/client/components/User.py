@@ -30,10 +30,10 @@ class User:
         self.game = None
         self.lobby = None
 
-    def get_player(self):
-        for player in self.game.players:
-            if player.name.split("#")[0] == self.username:
-                return player
+        self.player = None
+
+    #def get_player(self):
+    #    return self.player
 
     def create_lobby(self):
         request = json.dumps({"type": "create_lobby", "data": {}})
@@ -48,9 +48,9 @@ class User:
         self.client.send(request)
         
     def build_road(self, edge):
-        if (self.game.check_build_road(self.get_player(), edge)):
+        if (self.game.check_build_road(self.player, edge)):
             print("Building road")
-            player = self.get_player()
+            player = self.player
             request = json.dumps({"type": "check_permission", "data": {"edge": {"corner1": (edge.corners[0].x, edge.corners[0].y), "corner2": (edge.corners[1].x, edge.corners[1].y)}, "player": player.name, "lobby_id": self.lobby.lobby_id, "action": "build_road"}})
             self.client.send(request)
     
@@ -82,12 +82,14 @@ class User:
                     error_message = response['data']['error_message']
                     self.ui.error = error_message
                 case "game_start":
-                    self.game = ClientGame(self.ui, response['data']['jsondata'])
+                    self.game = ClientGame(self.ui, response['data']['jsondata'], self)
                     self.ui.change_state("game_started")
                     #self.ui.draw_game(self.game)
                     #self.ui.draw_hud(self.game)
                 case "road_created":
-                    player = self.get_player()
+                    for player in self.game.players:
+                        print(player.name)
+                    player = self.player
                     player_json = response['data']['player']
                     player.from_json(player_json)
                     edge_json = response['data']['edge']

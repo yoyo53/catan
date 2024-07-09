@@ -68,9 +68,9 @@ class ClientMap(Map):
         return None
     
     def draw_roads(self):
-        print("Roads ?")
+        #print("Roads ?")
         for road in self.roads:
-            print("Road", road)
+            #print("Road", road)
             start_corner = road.edge.corners[0]
             end_corner = road.edge.corners[1]
             start_pixel = self.corner_to_pixel(start_corner)
