@@ -156,3 +156,39 @@ class UserInterface:
         self.screen.fill(self.colors.BLACK)
         game.map.draw()
         pygame.display.flip()
+
+    def display_turn_order(self, turn_order):
+        y_offset = 50
+        for player in turn_order:
+            player_name = player[0]
+            order = player[1]
+            turn_order_text = self.font.render(f"{player_name} - {order}", True, self.colors.WHITE)
+            text_width = turn_order_text.get_width()
+            x = self.WINDOW_WIDTH - text_width - 50
+            y = y_offset
+            self.screen.blit(turn_order_text, (x, y))
+            y_offset += 50
+
+    def draw(self):
+        match self.status:
+            case "main_menu":
+                self.buttonmanager.create_main_menu_buttons()
+            case "lobby":
+                self.display_lobby(self.user.lobby)
+                if(self.user.lobby.lobby_id in self.user.hosted_games):
+                    self.buttonmanager.start_game_button()
+            case "game_started":
+                self.draw_game(self.user.game)
+            case _:
+                print("Unknown status")
+                print(self.status)
+        if self.error:
+            self.display_error(self.error)
+        if self.user.game.turn_order:
+            self.display_turn_order(self.user.game.turn_order)
+
+        self.buttonmanager.draw_buttons()
+
+    def change_state(self, state):
+        self.screen.fill(self.colors.BLACK)
+        pygame.display.flip()
