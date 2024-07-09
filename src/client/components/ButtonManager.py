@@ -32,3 +32,11 @@ class ButtonManager:
     def create_road_button(self):
         road_button = Button("create_road", self.screen, self.colors.RED, 500, 500, 50, 50, "Construire une route", self.colors.WHITE)
         self.add_button_if_not_exist(road_button)
+
+    def create_settlement_button(self):
+        settlement_button = Button("create_settlement", self.screen, self.colors.GREEN, 600, 600, 50, 50, "Construire un village", self.colors.WHITE)
+        self.add_button_if_not_exist(settlement_button)
+    
+    def upgrade_settlement_button(self):
+        upgrade_button = Button("upgrade_settlement", self.screen, self.colors.BLUE, 700, 700, 50, 50, "Améliorer un village", self.colors.WHITE)
+        self.add_button_if_not_exist(upgrade_button)

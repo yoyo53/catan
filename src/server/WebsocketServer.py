@@ -10,8 +10,8 @@ import sys
 sys.path.append('..')
 
 from lib.map.Corner import Corner
+from lib.Building import Building
 from lib.map.Edge import Edge
-from lib.Road import Road
 from lib.Road import Road
 
 class WebsocketServer:
@@ -65,7 +65,7 @@ class WebsocketServer:
                 case "check_permission":
                     return await self.check_permission(request,client)
                 case "get_turn_order":
-                    return await self.get_turn_order(client)
+                    return await self.get_turn_order(client) 
                 case _:
                     error = ErrorMessage(0,"Unknown message type")
                     return error.to_json()
@@ -134,6 +134,10 @@ class WebsocketServer:
         match request_data_action:
             case "build_road":
                 return self.build_road(request,client)
+            case "build_settlement":
+                return self.build_settlement(request,client)
+            case "upgrade_settlement":
+                return self.upgrade_settlement(request,client)
             case _:
                 error = ErrorMessage(0,"Unknown action")
                 return error.to_json()
@@ -170,6 +174,56 @@ class WebsocketServer:
                 await ws.send(response.to_json())
         else:
             response = ErrorMessage(0,"You can't build a road here")
+        return response.to_json()
+    
+    async def build_settlement(self, request, client):
+        lobby_id = request['data']['lobby_id']
+        lobby = self.lobby_manager.get_lobby(lobby_id)
+        corner = Corner(*request['data']['corner'])
+        for c in lobby.game.map.corners:
+            if c == corner:
+                corner = c
+        player_name = request['data']['player']
+        for p in lobby.game.players:
+            if p.name == player_name:
+                player = p
+        if (lobby.game.check_build_settlement(player, corner)):
+            lobby.game.map.buildings.append(Building("settlement", corner,player))
+            player.resources["brick"] -= 1
+            player.resources["wood"] -= 1
+            player.resources["sheep"] -= 1
+            player.resources["wheat"] -= 1
+            response = Response(1, "settlement_created", corner=corner.to_json(), player=player.to_json())
+            for client_id in lobby.players.values():
+                ws = self.clients[client_id]
+                await ws.send(response.to_json())
+        else:
+            response = ErrorMessage(0,"You can't build a settlement here")
+        return response.to_json()
+    
+    async def upgrade_settlement(self, request, client):
+        lobby_id = request['data']['lobby_id']
+        lobby = self.lobby_manager.get_lobby(lobby_id)
+        corner = Corner(*request['data']['corner'])
+        for c in lobby.game.map.corners:
+            if c == corner:
+                corner = c
+        player_name = request['data']['player']
+        for p in lobby.game.players:
+            if p.name == player_name:
+                player = p
+        if (lobby.game.check_upgrade_settlement(player, corner)):
+            for b in lobby.game.map.buildings:
+                if b.corner == corner and b.owner == player:
+                    b.type = "city"
+            player.resources["wheat"] -= 2
+            player.resources["ore"] -= 3
+            response = Response(1, "settlement_upgraded", corner=corner.to_json(), player=player.to_json())
+            for client_id in lobby.players.values():
+                ws = self.clients[client_id]
+                await ws.send(response.to_json())
+        else:
+            response = ErrorMessage(0,"You can't upgrade a settlement here")
         return response.to_json()
         
         

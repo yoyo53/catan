@@ -183,6 +183,8 @@ class UserInterface:
             case "game_started":
                 self.draw_game(self.user.game)
                 self.buttonmanager.create_road_button()
+                self.buttonmanager.create_settlement_button()
+                self.buttonmanager.upgrade_settlement_button()
             case _:
                 print("Unknown status")
                 print(self.status)
