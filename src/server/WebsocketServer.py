@@ -106,6 +106,7 @@ class WebsocketServer:
     
     async def start_game(self,client):
         lobby = self.lobby_manager.get_lobby_by_client(client)
+        lobby.generate_turn_order()
         if(lobby.clients['player_1'] != client):
             response = ErrorMessage(0,"You are not the host")
             return response.to_json()
@@ -116,8 +117,14 @@ class WebsocketServer:
             ws = self.clients[client_id]
             await ws.send(response.to_json())
         return response.to_json()
-
         
+    async def get_turn_order(self,client):
+        lobby = self.lobby_manager.get_lobby_by_client(client)
+        for client_id in lobby.players.values():
+            ws = self.clients[client_id]
+            response = Response(1, "turn_order", turn_order=lobby.turn_order)
+            await ws.send(response.to_json())
+        return response.to_json()
         
 
 if __name__ == "__main__":

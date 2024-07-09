@@ -57,6 +57,8 @@ class User:
                     self.ui.display_error(error_message, previous_screen, previous_buttons)
                 case "game_start":
                     self.game = ClientGame(self.ui, response['data']['jsondata'])
-                    self.ui.draw_game(self.game)
+                    self.ui.change_state("game_started")
+                case "turn_order":
+                    self.game.turn_order = response['data']['turn_order']
                 case _:
                     print("Unknown message type")
