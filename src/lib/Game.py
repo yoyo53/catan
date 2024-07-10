@@ -112,7 +112,6 @@ class Game:
         return self.current_player_turn == player_number
     
     def next_turn(self):
-        print("JE PRESSE NEXT TURN")
         self.current_player_turn = (self.current_player_turn % len(self.players)) + 1
         
     
