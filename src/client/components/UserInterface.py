@@ -4,7 +4,6 @@ import sys
 from game.ClientMap import ClientMap
 
 sys.path.append('..')
-from lib.map.Map import Map
 from components.ButtonManager import ButtonManager
 from components.Button import Button
 
@@ -120,7 +119,6 @@ class UserInterface:
             self.screen.blit(player_text, (50, y_offset))
             y_offset += 40
 
-        pygame.display.flip()
 
     def handle_events(self, event):
         for button in self.buttonmanager.buttons:
@@ -142,18 +140,13 @@ class UserInterface:
         road_button = Button("create_road", self.screen, self.colors.RED, 500, 500, 50, 50, "Construire une route", self.colors.WHITE)
         road_button.draw()
         self.buttons.append(road_button)
-        pygame.display.flip()
+
     def draw_map(self, map):
         clientMap = ClientMap(map, self)
         clientMap.draw()
 
     def draw_game(self, game):
-        #self.screen.fill(self.colors.BLACK)
         game.map.draw()
-        #road_button = Button(self.screen, self.colors.RED, 500, 500, 50, 50, "Construire une route", self.colors.WHITE)
-        #road_button.draw()
-        #self.buttons.append(road_button)
-        pygame.display.flip()
 
     def display_turn_order(self, turn_order):
         y_offset = 50
@@ -195,8 +188,6 @@ class UserInterface:
         if self.error:
             self.display_error(self.error)
         
-           
-            
 
             
 

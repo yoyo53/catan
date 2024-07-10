@@ -9,9 +9,9 @@ class ClientMap(Map):
     def __init__(self, ui):
         super().__init__()
         self.ui = ui
-        self.radius_hex = 50
-        self.margin_x = 550
-        self.margin_y = 550
+        self.radius_hex = 30
+        self.margin_x = 400
+        self.margin_y = 400
 
     def draw(self):
         for tile in self.tiles:
