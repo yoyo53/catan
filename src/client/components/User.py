@@ -78,6 +78,11 @@ class User:
     def get_turn_order(self):
         request = json.dumps({"type": "get_turn_order", "data": {}})
         self.client.send(request)
+
+    def get_player_from_name(self, name):
+        for player in self.game.players:
+            if player.name == name:
+                return player
     
     def handle_messages(self):
         while not self.message_queue.empty():
@@ -107,28 +112,30 @@ class User:
                 case "game_start":
                     self.game = ClientGame(self.ui, response['data']['jsondata'], self)
                     self.ui.change_state("game_started")
-                    #self.ui.draw_game(self.game)
-                    #self.ui.draw_hud(self.game)
+                    self.game.turn_order = response['data']['turn_order']
+                    for player_name, order in self.game.turn_order:
+                        if player_name == self.username:
+                            self.my_turn = order
+                            self.player.color = self.game.colors.get_color(order)
                 case "road_created":
-                    player = self.player
-                    player_json = response['data']['player']
-                    player.from_json(player_json)
+                    player = self.get_player_from_name(response['data']['player']['name'])
+                    for player_name, order in self.game.turn_order:
+                        if player_name == player.name:
+                            player.color = self.game.colors.get_color(order)
+                            break
                     edge_json = response['data']['edge']
                     edge_new = Edge.from_json(edge_json)
                     print("Edge receive", edge_new)
                     for edge in self.game.map.edges:
                         if edge.equals_coords(edge_new):
-                            print("You find me !")
                             edge_new = edge
-                    # TEST PURPOSE ONLY
-                    player.color = (255, 0, 0)
-                    # TEST PURPOSE ONLY
                     self.game.map.roads.append(Road(player, edge_new))
-                    #print(self.game.map.roads)
                 case "settlement_created":
-                    player = self.player
-                    player_json = response['data']['player']
-                    player.from_json(player_json)
+                    player = self.get_player_from_name(response['data']['player']['name'])
+                    for player_name, order in self.game.turn_order:
+                        if player_name == player.name:
+                            player.color = self.game.colors.get_color(order)
+                            break
                     corner_json = Corner.from_json(response['data']['corner'])
                     for corner in self.game.map.corners:
                         if corner == corner_json:
@@ -148,12 +155,7 @@ class User:
                     for building in self.game.map.buildings:
                         if building.corner == my_corner:
                             building.type = "city"
-
-                case "turn_order":
-                    self.game.turn_order = response['data']['turn_order']
-                    for player_name, order in self.game.turn_order:
-                        if player_name == self.username:
-                            self.my_turn = order
+                    
                 case "end_turn":
                     self.game.next_turn()
 

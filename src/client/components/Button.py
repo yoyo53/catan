@@ -1,7 +1,7 @@
 import pygame
 
 class Button:
-    def __init__ (self, name_id : str, screen, color, margin_left, margin_top, width, height, text,text_color):
+    def __init__ (self, name_id : str, screen, color, margin_left, margin_top, width, height, text,text_color, image = None):
         
         self.name_id = name_id
         self.screen = screen
@@ -13,13 +13,19 @@ class Button:
         self.heigth = height
         self.text = text
         self.text_color = text_color
+        self.image = image
         self.font = pygame.font.Font(None, 36)
 
     def draw(self):
-        pygame.draw.rect(self.screen, self.color,self.button)
-        button_text = self.font.render(self.text, True, self.text_color)
-        self.screen.blit(button_text, (self.button.x + (self.button.width - button_text.get_width()) // 2, self.button.y + (self.button.height - button_text.get_height()) // 2))
-        pygame.display.flip()
+        if self.image:
+            self.screen.blit(self.image, self.button)
+        else:
+            pygame.draw.rect(self.screen, self.color, self.button)
+            if self.text:
+                text_surface = self.font.render(self.text, True, self.text_color)
+                text_rect = text_surface.get_rect(center=self.button.center)
+                self.screen.blit(text_surface, text_rect)
+        
 
     def is_clicked(self,pos):
         return self.button.collidepoint(pos)

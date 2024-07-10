@@ -1,4 +1,10 @@
 from components.Button import Button
+import os
+import pygame
+
+assets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..','..','assets')
+
+
 
 class ButtonManager:
     def __init__(self, screen, colors):
@@ -30,17 +36,21 @@ class ButtonManager:
         self.add_button_if_not_exist(start_button)
     
     def next_turn_button(self):
-        next_turn_button = Button("next_turn", self.screen, self.colors.WHEAT, self.screen.get_width() // 2, self.screen.get_height() // 2, 800, 50, "Tour suivant", self.colors.WHITE)
-        self.add_button(next_turn_button)
+        NEXT_TURN_IMG = pygame.image.load(os.path.join(assets_path, 'next_turn.png')).convert_alpha()
+        next_turn_button = Button("next_turn", self.screen, self.colors.WHEAT, 1190,600, 50, 50, "Tour suivant", self.colors.WHITE, image=NEXT_TURN_IMG)
+        self.add_button_if_not_exist(next_turn_button)
 
     def create_road_button(self):
-        road_button = Button("create_road", self.screen, self.colors.RED, 500, 500, 50, 50, "Construire une route", self.colors.WHITE)
+        ROAD_IMG = pygame.image.load(os.path.join(assets_path, 'road.png')).convert_alpha()
+        road_button = Button("create_road", self.screen, self.colors.RED, 890, 600, 50, 50, "Construire une route", self.colors.WHITE, image=ROAD_IMG)
         self.add_button_if_not_exist(road_button)
 
     def create_settlement_button(self):
-        settlement_button = Button("create_settlement", self.screen, self.colors.GREEN, 600, 600, 50, 50, "Construire un village", self.colors.WHITE)
+        HOUSE_IMG = pygame.image.load(os.path.join(assets_path, 'house.png')).convert_alpha()
+        settlement_button = Button("create_settlement", self.screen, self.colors.GREEN, 990, 600, 50, 50, "Construire un village", self.colors.WHITE, image=HOUSE_IMG)
         self.add_button_if_not_exist(settlement_button)
     
     def upgrade_settlement_button(self):
-        upgrade_button = Button("upgrade_settlement", self.screen, self.colors.BLUE, 700, 700, 50, 50, "Améliorer un village", self.colors.WHITE)
+        VILLAGE_IMG = pygame.image.load(os.path.join(assets_path, 'village.png')).convert_alpha()
+        upgrade_button = Button("upgrade_settlement", self.screen, self.colors.BLUE, 1090, 600, 50, 50, "Améliorer un village", self.colors.WHITE, image=VILLAGE_IMG)
         self.add_button_if_not_exist(upgrade_button)

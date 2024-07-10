@@ -21,6 +21,10 @@ class Colors:
             'wood': self.WOOD,
             'sheep': self.SHEEP,
             'wheat': self.WHEAT,
+            1: self.RED,
+            2: self.BLUE,
+            3: self.GREEN,
+            4: self.PURPLE
         }
         return colors.get(tile_type)
         

@@ -3,14 +3,11 @@ import sys
 from components.UserInterface import UserInterface
 from components.User import User
 
-from lib.map.Map import Map
-
 if __name__ == "__main__":
 
     UI = UserInterface(60, 1280, 720)
     username = UI.draw_text_input_box("Pseudo", 50, 50, 50, 50) 
-    user = User(username, UI)
-    
+    user = User(username, UI) 
     
     running = True
     while running:
@@ -35,7 +32,6 @@ if __name__ == "__main__":
                         print("Edge clicked", edge)
                         if edge:
                             user.build_road(edge)
-                        #UI.draw_hud(user.game)
                     elif clicked_button.name_id == "create_settlement":
                         mouse_click = UI.wait_for_click()
                         corner = user.game.map.get_corner_from_click(mouse_click)
@@ -51,12 +47,9 @@ if __name__ == "__main__":
                             user.upgrade_settlement(corner)
                             
 
-                    
-
         user.handle_messages()
         UI.draw()
-
-        pygame.display.update()
+        pygame.display.flip()
         UI.clock.tick(UI.fps)
 
     pygame.quit()
