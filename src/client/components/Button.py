@@ -1,7 +1,9 @@
 import pygame
 
 class Button:
-    def __init__ (self, screen, color, margin_left, margin_top, width, height, text,text_color):
+    def __init__ (self, name_id : str, screen, color, margin_left, margin_top, width, height, text,text_color):
+        
+        self.name_id = name_id
         self.screen = screen
         self.color = color
         self.margin_left = margin_left - width // 2 #To center
@@ -21,3 +23,8 @@ class Button:
 
     def is_clicked(self,pos):
         return self.button.collidepoint(pos)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Button):
+            return self.name_id == other.name_id
+        return False

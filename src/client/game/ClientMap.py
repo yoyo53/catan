@@ -1,3 +1,4 @@
+import math
 import pygame
 import sys
 
@@ -15,6 +16,8 @@ class ClientMap(Map):
     def draw(self):
         for tile in self.tiles:
             self.draw_hex(tile)
+        self.draw_roads()
+        self.draw_buldings()
             
     def draw_hex(self, tile):
         center = self.center_to_pixel(tile)
@@ -50,3 +53,56 @@ class ClientMap(Map):
             tile = self.gettile(jsontile["x"], jsontile["y"])
             tile.type = jsontile["type"]
             tile.number = jsontile["number"]
+
+    def get_edge_from_click(self, pos):
+        for edge in self.edges:
+            start_corner = edge.corners[0]
+            end_corner = edge.corners[1]
+            start_pixel = self.corner_to_pixel(start_corner)#, self.ui.screen)
+            end_pixel = self.corner_to_pixel(end_corner)#, self.ui.screen)
+            center_x = (start_pixel[0] + end_pixel[0]) / 2
+            center_y = (start_pixel[1] + end_pixel[1]) / 2
+            radius = 40 #((end_pixel[0] - start_pixel[0]) + (end_pixel[1] - start_pixel[1])) / 2
+            hit_box = pygame.Rect(center_x - radius, center_y - radius, 2 * radius, 2 * radius)
+            #pygame.draw.circle(self.ui.screen, (0, 0, 0), (int(center_x), int(center_y)), int(radius), 1)
+            if hit_box.collidepoint(pos):
+                return edge
+        return None
+    
+    def get_corner_from_click(self, pos):
+        for corner in self.corners:
+            corner_pixel = self.corner_to_pixel(corner)#, self.ui.screen)
+            hit_box = pygame.Rect(corner_pixel[0] - 20, corner_pixel[1] - 20, 40, 40)
+            #pygame.draw.circle(self.ui.screen, (0, 0, 0), corner_pixel, 10, 1)
+            if hit_box.collidepoint(pos):
+                return corner
+            
+        return None
+    
+    def draw_roads(self):
+        #print("Roads ?")
+        for road in self.roads:
+            #print("Road", road)
+            start_corner = road.edge.corners[0]
+            end_corner = road.edge.corners[1]
+            start_pixel = self.corner_to_pixel(start_corner)
+            end_pixel = self.corner_to_pixel(end_corner)
+            pygame.draw.line(self.ui.screen, road.owner.color, start_pixel, end_pixel, 10)
+
+    def draw_buldings(self):
+        for building in self.buildings:
+            center = self.corner_to_pixel(building.corner)
+            if building.type == "settlement":
+                pygame.draw.circle(self.ui.screen, building.owner.color, center, 17)
+            elif building.type == "city":
+                pygame.draw.polygon(self.ui.screen, building.owner.color, self.get_hexagon_points(center, 25))
+
+    def get_hexagon_points(self, center, radius):
+        points = []
+        for i in range(6):
+            angle_deg = 60 * i
+            angle_rad = math.pi / 180 * angle_deg
+            x = center[0] + radius * math.cos(angle_rad)
+            y = center[1] + radius * math.sin(angle_rad)
+            points.append((x, y))
+        return points

@@ -21,3 +21,15 @@ class Corner:
     
     def __repr__(self) -> str:
         return f"({self.x}, {self.y})"
+    
+    def to_json(self):
+        return {
+            "x": self.x,
+            "y": self.y
+        }
+      
+    staticmethod  
+    def from_json(json):
+        x = json['x']
+        y = json['y']
+        return Corner(x, y)
