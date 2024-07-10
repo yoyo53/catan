@@ -238,8 +238,9 @@ class WebsocketServer:
         
         lobby.game.next_turn()
         response = Response(1,"end_turn")
-        for client_id, ws in self.clients.items():
+        for client_id in lobby.players.values():
             if client_id != client:
+                ws = self.clients[client_id]
                 await ws.send(response.to_json())
         return response.to_json()
         
