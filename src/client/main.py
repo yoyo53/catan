@@ -27,7 +27,7 @@ if __name__ == "__main__":
                         user.join_lobby(lobby_id)
                     elif clicked_button.name_id == "start_game":
                         user.start_game()
-                    elif clicked_button.text == "Tour suivant":
+                    elif clicked_button.name_id == "next_turn":
                         user.end_turn()
                     elif clicked_button.name_id == "create_road":
                         mouse_click = UI.wait_for_click()
