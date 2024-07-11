@@ -144,9 +144,11 @@ class User:
                     self.game.map.buildings.append(Building("settlement", my_corner, player))
 
                 case "settlement_upgraded":
-                    player = self.player
-                    player_json = response['data']['player']
-                    player.from_json(player_json)
+                    player = self.get_player_from_name(response['data']['player']['name'])
+                    for player_name, order in self.game.turn_order:
+                        if player_name == player.name:
+                            player.color = self.game.colors.get_color(order)
+                            break
                     corner_json = Corner.from_json(response['data']['corner'])
                     for corner in self.game.map.corners:
                         if corner == corner_json:
