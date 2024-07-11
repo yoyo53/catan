@@ -66,10 +66,10 @@ class Game:
         if player.resources["wood"] >= 1 and player.resources["brick"] >= 1 and player.resources["sheep"] >= 1 and player.resources["wheat"] >= 1:
             wecan = False
             for edge in corner.edges:
+                for c in edge.corners:
+                    if c.building is not None:
+                        return False
                 if edge.road is not None and edge.road.owner == player:
-                    for c in edge.corners:
-                        if c.building is not None:
-                            return False
                     wecan = True
             return wecan
         return False
