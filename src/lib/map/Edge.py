@@ -1,5 +1,4 @@
 import sys
-import pygame
 
 sys.path.append('..')
 
